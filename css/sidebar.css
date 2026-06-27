@@ -1,0 +1,84 @@
+/* ── LAYOUT ── */
+.layout {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  background: var(--green-dark);
+  width: 220px;
+  min-height: 100%;
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  transition: width 0.3s ease;
+  overflow: hidden;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.sidebar.collapsed {
+  width: 56px;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  height: 100%;
+}
+
+.sidebar ul li a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  color: var(--green-accent);
+  text-decoration: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 0.2s, color 0.2s;
+}
+
+.sidebar ul li a:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--white);
+}
+
+.sidebar ul li a.active {
+  background: var(--green-mid);
+  color: var(--white);
+  font-weight: 600;
+}
+
+/* Ocultar texto al colapsar */
+.sidebar.collapsed ul li a span {
+  display: none;
+}
+
+.sidebar.collapsed ul li a {
+  justify-content: center;
+  padding: 10px 0;
+}
+
+/* Separador + Cerrar sesión al fondo */
+.sidebar ul li:last-child {
+  margin-top: auto;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 8px;
+}
+
+.sidebar ul li:last-child a {
+  color: #ff8a8a;
+}
+
+.sidebar ul li:last-child a:hover {
+  background: rgba(255, 80, 80, 0.15);
+  color: #ffb3b3;
+}

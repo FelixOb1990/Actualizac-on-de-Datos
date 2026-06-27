@@ -1,0 +1,71 @@
+<!-- fragments/perfil.html — Datos personales del titular -->
+<div class="frag-perfil">
+
+  <div class="frag-page-header">
+    <h1>Mis Datos Personales</h1>
+    <p>Revisá y actualizá tu información de contacto y ubicación.</p>
+  </div>
+
+  <div class="loading" id="loadingState"><div class="spinner"></div><p>Cargando información...</p></div>
+  <div class="alert" id="alertGlobal"></div>
+
+  <div id="sectionTitular">
+    <div class="card">
+      <div class="card-header"><h2>Datos Personales</h2><span class="badge">Titular</span></div>
+      <div class="card-body">
+        <div class="alert" id="alertTitular"></div>
+        <div class="form-grid">
+          <div class="field"><label>Cédula</label><input type="text" id="t_cedula" readonly></div>
+          <div class="field"><label>Género</label>
+            <select id="t_genero" disabled>
+              <option value="">Seleccione...</option>
+              <option>Masculino</option>
+              <option>Femenino</option>
+            </select>
+          </div>
+          <div class="field"><label>Apellido 1</label><input type="text" id="t_apellido1" disabled></div>
+          <div class="field"><label>Apellido 2</label><input type="text" id="t_apellido2" disabled></div>
+          <div class="field"><label>Nombre 1</label><input type="text" id="t_nombre1" disabled></div>
+          <div class="field"><label>Nombre 2</label><input type="text" id="t_nombre2" disabled></div>
+          <div class="field col-span-2"><label>Contacto Personal (Correo)</label><input type="email" id="t_contacto" disabled></div>
+          <div class="field"><label>Teléfono Primario</label><input type="tel" id="t_tel1" disabled maxlength="20"></div>
+          <div class="field"><label>Teléfono Secundario</label><input type="tel" id="t_tel2" disabled maxlength="20"></div>
+          <div class="field"><label>Estado Civil</label>
+            <select id="t_estadocivil" disabled>
+              <option value="">Seleccione...</option>
+              <option>Soltero(a)</option><option>Casado(a)</option><option>Unión Libre</option>
+              <option>Separado(a)</option><option>Divorciado(a)</option><option>Viudo(a)</option>
+            </select>
+          </div>
+        </div>
+        <div class="section-divider"><span>Ubicación</span></div>
+        <div class="form-grid three-col">
+          <div class="field"><label>Provincia</label>
+            <select id="t_provincia" onchange="cargarCantones('t')" disabled><option value="">Seleccione...</option></select>
+          </div>
+          <div class="field"><label>Cantón</label>
+            <select id="t_canton" onchange="cargarDistritos('t')" disabled><option value="">Seleccione provincia primero</option></select>
+          </div>
+          <div class="field"><label>Distrito</label>
+            <select id="t_distrito" disabled><option value="">Seleccione cantón primero</option></select>
+          </div>
+          <div class="field col-span-3"><label>Dirección Exacta</label><input type="text" id="t_direccion" disabled></div>
+        </div>
+      </div>
+      <div class="card-actions">
+        <button class="btn btn-primary" onclick="guardarTitular()" id="btnGuardarTitular">Guardar Cambios</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<style>
+.frag-page-header { margin-bottom: 28px; }
+.frag-page-header h1 { font-family: 'DM Serif Display', serif; font-size: 1.6rem; color: var(--green-dark); font-weight: 400; }
+.frag-page-header p  { margin-top: 4px; color: #5a8a6a; font-size: 0.9rem; }
+
+/* Reutiliza las clases de colaborador-styles.css que ya está en el proyecto.
+   Si aún no está linkeada en main.html, agregar:
+   <link rel="stylesheet" href="../css/colaborador-styles.css"> en el <head> de main.html */
+</style>
