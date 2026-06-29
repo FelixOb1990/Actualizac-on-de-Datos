@@ -8,12 +8,10 @@
 // ── Evitar re-declaración si el script se carga varias veces ──
 if (typeof window._colaboradorLoaded === 'undefined') {
 window._colaboradorLoaded = true;
-
 const FLOWS = {
   buscarColaborador:    'https://default1cf912e46be04485ada7ae59cd0c96.ee.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/09237870375841bf8de7e7fc257227aa/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=RjzdNhH6QV9epKmaWGCK-JfHxkief3lP_6bYuKbDHpg',
   actualizarColaborador:'https://default1cf912e46be04485ada7ae59cd0c96.ee.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/037ea4f5f35d42a3b1e7927d5bd61b62/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=AMs-KNTu_E59o3D-oMK-nwXWiM1lGhK4CcZwvr6szoE',
-  gestionarBeneficiario:'https://default1cf912e46be04485ada7ae59cd0c96.ee.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/e4ecce12ae4d4d8cac69c0c830d782a2/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=GOgMRphPg3hSnSVpAI4fDIBPjvjXIUAsm-srCsWVKds'
-};
+  };
 
 const PROVINCIAS=[{c:1,n:'San José'},{c:2,n:'Alajuela'},{c:3,n:'Cartago'},{c:4,n:'Heredia'},{c:5,n:'Guanacaste'},{c:6,n:'Puntarenas'},{c:7,n:'Limón'}];
 const CANTONES=[
@@ -35,21 +33,17 @@ const DISTRITOS=[
 ];
 
 let titularItemId = null, benefItemId = null, tieneBeneficiario = false;
-
 // ── Helpers ───────────────────────────────────────────────────
-
 async function callFlow(url, body) {
   const res = await fetch(url, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
   if (!res.ok) throw new Error('Error ' + res.status + ': ' + res.statusText);
   const text = await res.text();
   return text ? JSON.parse(text) : {};
 }
-
 function setLoading(show) {
   const el = document.getElementById('loadingState');
   if (el) el.style.display = show ? 'block' : 'none';
 }
-
 function showAlert(id, type, msg) {
   const el = document.getElementById(id);
   if (!el) return;
@@ -57,14 +51,11 @@ function showAlert(id, type, msg) {
   el.textContent = msg;
   setTimeout(() => el.classList.remove('show'), 6000);
 }
-
 function hideAlert(id) {
   const el = document.getElementById(id);
   if (el) el.classList.remove('show');
 }
-
 // ── Geografía ─────────────────────────────────────────────────
-
 function initProvincias() {
   ['t_provincia', 'b_provincia'].forEach(id => {
     const el = document.getElementById(id);
@@ -76,7 +67,6 @@ function initProvincias() {
     });
   });
 }
-
 function cargarCantones(px) {
   const pv = parseInt(document.getElementById(px+'_provincia').value);
   const cs = document.getElementById(px+'_canton');
@@ -92,7 +82,6 @@ function cargarCantones(px) {
   });
   cs.disabled = false;
 }
-
 function cargarDistritos(px) {
   const cv = parseInt(document.getElementById(px+'_canton').value);
   const ds = document.getElementById(px+'_distrito');
@@ -106,7 +95,6 @@ function cargarDistritos(px) {
   });
   ds.disabled = false;
 }
-
 function setGeo(px, prov, cant, dist) {
   const p = PROVINCIAS.find(x => x.n === prov); if (!p) return;
   document.getElementById(px+'_provincia').value = p.c; cargarCantones(px);
@@ -114,16 +102,13 @@ function setGeo(px, prov, cant, dist) {
   document.getElementById(px+'_canton').value = c.c; cargarDistritos(px);
   if (dist) document.getElementById(px+'_distrito').value = dist;
 }
-
 // ── Titular ───────────────────────────────────────────────────
-
 function habilitarCampos() {
   ['t_apellido1','t_apellido2','t_nombre1','t_nombre2','t_contacto','t_tel1','t_tel2','t_direccion',
    't_genero','t_estadocivil','t_provincia'].forEach(id => {
     const el = document.getElementById(id); if (el) el.disabled = false;
   });
 }
-
 function llenarTitular(f) {
   document.getElementById('t_cedula').value    = f['Cedulaa']  || '';
   document.getElementById('t_apellido1').value = f['Apellido1']|| '';
@@ -141,7 +126,6 @@ function llenarTitular(f) {
   document.getElementById('t_direccion').value = f['Direccion'] || '';
   setGeo('t', f['Provincia']||'', f['Cant_x00f3_n']||'', f['Distrito']||'');
 }
-
 async function buscarColaborador(ced) {
   if (!ced) { showAlert('alertGlobal','error','No se encontró la cédula del usuario.'); return; }
   setLoading(true); hideAlert('alertGlobal');
@@ -155,7 +139,6 @@ async function buscarColaborador(ced) {
     }
     titularItemId = data.items[0].ID;
     llenarTitular(data.items[0]);
-    await cargarBeneficiario(ced);
     if (section) section.classList.remove('hidden');
     habilitarCampos();
   } catch(e) {
@@ -164,7 +147,6 @@ async function buscarColaborador(ced) {
     setLoading(false);
   }
 }
-
 async function guardarTitular() {
   const btn = document.getElementById('btnGuardarTitular');
   btn.disabled = true; btn.textContent = 'Guardando...'; hideAlert('alertTitular');
@@ -203,12 +185,6 @@ async function guardarTitular() {
   window.cargarCantones      = cargarCantones;
   window.cargarDistritos     = cargarDistritos;
   window.guardarTitular      = guardarTitular;
-  window.mostrarFormBenef    = mostrarFormBenef;
-  window.cancelarBenef       = cancelarBenef;
-  window.guardarBenef        = guardarBenef;
-  window.confirmarEliminarBenef = confirmarEliminarBenef;
-  window.cerrarModal         = cerrarModal;
-  window.eliminarBenef       = eliminarBenef;
 
   initProvincias();
 

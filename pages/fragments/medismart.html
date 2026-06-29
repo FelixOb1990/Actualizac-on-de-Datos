@@ -1,4 +1,4 @@
-<!-- fragments/medismart.html — Plan Médico / Beneficiarios -->
+<!-- fragments/medismart.html — Solo beneficiarios -->
 <div class="frag-medismart">
 
   <div class="frag-page-header">
@@ -9,82 +9,117 @@
   <div class="loading" id="loadingState"><div class="spinner"></div><p>Cargando información...</p></div>
   <div class="alert" id="alertGlobal"></div>
 
-  <div id="sectionTitular">
-
-    <!-- Beneficiario -->
+  <div id="sectionBenef">
     <div class="card">
       <div class="card-header"><h2>Beneficiario</h2><span class="badge">Plan Médico Medismart</span></div>
       <div class="card-body">
         <div class="alert" id="alertBenef"></div>
+
         <div id="benefEmpty" class="empty-state">
           <div class="icon">👤</div>
           <p>No tiene un beneficiario registrado para el plan médico.</p>
           <button class="btn btn-primary" onclick="mostrarFormBenef()">+ Agregar Beneficiario</button>
         </div>
+
         <div id="benefForm" class="hidden">
           <div class="form-grid">
-            <div class="field"><label>Tipo de Cédula</label>
+            <div class="field">
+              <label>Tipo de Cédula</label>
               <select id="b_tipocedula">
-                <option value="">Seleccione...</option><option>Nacional</option>
-                <option>Residente</option><option>Pasaporte</option>
+                <option value="">Seleccione...</option>
+                <option>Nacional</option><option>Residente</option><option>Pasaporte</option>
               </select>
             </div>
-            <div class="field"><label>Cédula del Beneficiario</label><input type="text" id="b_cedula" maxlength="20"></div>
-            <div class="field col-span-2"><label>Nombre Completo</label><input type="text" id="b_nombre"></div>
-            <div class="field"><label>Fecha de Nacimiento</label><input type="date" id="b_fechanac"></div>
-            <div class="field"><label>Género</label>
-              <select id="b_genero"><option value="">Seleccione...</option><option>Masculino</option><option>Femenino</option></select>
+            <div class="field">
+              <label>Cédula del Beneficiario</label>
+              <input type="text" id="b_cedula" maxlength="20">
             </div>
-            <div class="field"><label>Estado Civil</label>
+            <div class="field col-span-2">
+              <label>Nombre Completo</label>
+              <input type="text" id="b_nombre">
+            </div>
+            <div class="field">
+              <label>Fecha de Nacimiento</label>
+              <input type="date" id="b_fechanac">
+            </div>
+            <div class="field">
+              <label>Género</label>
+              <select id="b_genero">
+                <option value="">Seleccione...</option><option>Masculino</option><option>Femenino</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Estado Civil</label>
               <select id="b_estadocivil">
-                <option value="">Seleccione...</option><option>Soltero(a)</option><option>Casado(a)</option>
-                <option>Unión Libre</option><option>Separado(a)</option><option>Divorciado(a)</option><option>Viudo(a)</option>
+                <option value="">Seleccione...</option>
+                <option>Soltero(a)</option><option>Casado(a)</option><option>Unión Libre</option>
+                <option>Separado(a)</option><option>Divorciado(a)</option><option>Viudo(a)</option>
               </select>
             </div>
-            <div class="field"><label>Parentesco</label>
+            <div class="field">
+              <label>Parentesco</label>
               <select id="b_parentesco">
-                <option value="">Seleccione...</option><option>Abuelo(a)</option><option>Cónyuge</option>
-                <option>Cuñado(a)</option><option>Esposo(a)</option><option>Hermano(a)</option><option>Hijo(a)</option>
-                <option>Madre</option><option>Nieto(a)</option><option>Novio(a)</option><option>Nuera</option>
-                <option>Padre</option><option>Pareja</option><option>Primo(a)</option><option>Sobrino(a)</option>
-                <option>Suegro(a)</option><option>Tío(a)</option><option>Yerno</option><option>Otra relación</option>
+                <option value="">Seleccione...</option>
+                <option>Abuelo(a)</option><option>Cónyuge</option><option>Cuñado(a)</option>
+                <option>Esposo(a)</option><option>Hermano(a)</option><option>Hijo(a)</option>
+                <option>Madre</option><option>Nieto(a)</option><option>Novio(a)</option>
+                <option>Nuera</option><option>Padre</option><option>Pareja</option>
+                <option>Primo(a)</option><option>Sobrino(a)</option><option>Suegro(a)</option>
+                <option>Tío(a)</option><option>Yerno</option><option>Otra relación</option>
               </select>
             </div>
-            <div class="field col-span-2"><label>Correo Electrónico</label><input type="email" id="b_correo"></div>
+            <div class="field col-span-2">
+              <label>Correo Electrónico</label>
+              <input type="email" id="b_correo">
+            </div>
           </div>
+
           <div class="section-divider"><span>Ubicación del Beneficiario</span></div>
           <div class="form-grid three-col">
-            <div class="field"><label>Provincia</label>
-              <select id="b_provincia" onchange="cargarCantones('b')"><option value="">Seleccione...</option></select>
+            <div class="field">
+              <label>Provincia</label>
+              <select id="b_provincia" onchange="msCargarCantones()">
+                <option value="">Seleccione...</option>
+              </select>
             </div>
-            <div class="field"><label>Cantón</label>
-              <select id="b_canton" onchange="cargarDistritos('b')" disabled><option value="">Seleccione provincia primero</option></select>
+            <div class="field">
+              <label>Cantón</label>
+              <select id="b_canton" onchange="msCargarDistritos()" disabled>
+                <option value="">Seleccione provincia primero</option>
+              </select>
             </div>
-            <div class="field"><label>Distrito</label>
-              <select id="b_distrito" disabled><option value="">Seleccione cantón primero</option></select>
+            <div class="field">
+              <label>Distrito</label>
+              <select id="b_distrito" disabled>
+                <option value="">Seleccione cantón primero</option>
+              </select>
             </div>
           </div>
         </div>
       </div>
+
       <div class="card-actions" id="benefActions" style="display:none">
-        <button class="btn-danger" onclick="confirmarEliminarBenef()" id="btnEliminarBenef" style="display:none">Eliminar Beneficiario</button>
-        <button class="btn-secondary" onclick="cancelarBenef()">Cancelar</button>
-        <button class="btn btn-primary" onclick="guardarBenef()" id="btnGuardarBenef">Guardar Beneficiario</button>
+        <button class="btn-danger" onclick="msConfirmarEliminar()" id="btnEliminarBenef" style="display:none">
+          Eliminar Beneficiario
+        </button>
+        <button class="btn-secondary" onclick="msCancelar()">Cancelar</button>
+        <button class="btn btn-primary" onclick="msGuardarBenef()" id="btnGuardarBenef">
+          Guardar Beneficiario
+        </button>
       </div>
     </div>
+  </div>
 
-  </div><!-- /#sectionTitular -->
+</div>
 
-</div><!-- /.frag-medismart -->
-
-<!-- Modal eliminar beneficiario -->
+<!-- Modal eliminar -->
 <div class="modal-overlay" id="modalEliminar">
   <div class="modal">
     <h3>Eliminar Beneficiario</h3>
     <p>¿Está seguro que desea eliminar al beneficiario? Esta acción no se puede deshacer.</p>
     <div class="modal-actions">
-      <button class="btn-secondary" onclick="cerrarModal()">Cancelar</button>
-      <button class="btn-danger" onclick="eliminarBenef()">Sí, eliminar</button>
+      <button class="btn-secondary" onclick="msCerrarModal()">Cancelar</button>
+      <button class="btn-danger" onclick="msEliminarBenef()">Sí, eliminar</button>
     </div>
   </div>
 </div>
