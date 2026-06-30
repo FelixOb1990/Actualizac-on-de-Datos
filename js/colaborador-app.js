@@ -7,6 +7,8 @@
 
 // ── Evitar re-declaración si el script se carga varias veces ──
 if (typeof window._colaboradorLoaded === 'undefined') {
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const ced  = user['Cedula'] || user['cedula'] || '';
 window._colaboradorLoaded = true;
 const FLOWS = {
   buscarColaborador:    'https://default1cf912e46be04485ada7ae59cd0c96.ee.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/09237870375841bf8de7e7fc257227aa/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=RjzdNhH6QV9epKmaWGCK-JfHxkief3lP_6bYuKbDHpg',
@@ -126,13 +128,29 @@ function llenarTitular(f) {
   document.getElementById('t_direccion').value = f['Direccion'] || '';
   setGeo('t', f['Provincia']||'', f['Cant_x00f3_n']||'', f['Distrito']||'');
 }
-async function buscarColaborador(ced) {
+async function buscarColaborador() {
   if (!ced) { showAlert('alertGlobal','error','No se encontró la cédula del usuario.'); return; }
   setLoading(true); hideAlert('alertGlobal');
   const section = document.getElementById('sectionTitular');
   if (section) section.classList.add('hidden');
   try {
-    const data = await callFlow(FLOWS.buscarColaborador, { cedula: ced });
+    const data = await callFlow(FLOWS.buscarColaborador, {
+      cedula: ced,
+      operacion: 'BuscaColaborador',
+      itemId:    0,
+      Apellido1: '',
+      Apellido2: '',
+      Nombre1:   '',
+      Nombre2:   '',
+      Contacto:  '',
+      Genero:    '',
+      Tel1:      '',
+      Tel2:      '',
+      EstadoCivil: '',
+      Provincia: '',
+      Canton:    '',
+      Distrito:  '',
+      Direccion: ''});
     if (!data.items || data.items.length === 0) {
       showAlert('alertGlobal','error','No se encontró ningún colaborador con esa cédula.');
       return;
@@ -155,7 +173,9 @@ async function guardarTitular() {
     const ce  = document.getElementById('t_canton');
     const ecVal = (()=>{ const m={'Soltero(a)':'Soltero(a)','Casado(a)':'Casado(a)','Unión Libre':'Union Libre','Separado(a)':'Separado(a)','Divorciado(a)':'Divorciado(a)','Viudo(a)':'Viudo(a)'};
       return m[document.getElementById('t_estadocivil').value] || document.getElementById('t_estadocivil').value; })();
-    await callFlow(FLOWS.actualizarColaborador, {
+    await callFlow(FLOWS.buscarColaborador, {
+      cedula: ced,
+      operacion: 'ActualizaColaborador',
       itemId:    titularItemId,
       Apellido1: document.getElementById('t_apellido1').value,
       Apellido2: document.getElementById('t_apellido2').value,
@@ -189,9 +209,7 @@ async function guardarTitular() {
   initProvincias();
 
   // Leer cédula del usuario logueado
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
-  const ced  = user['Cedula'] || user['cedula'] || '';
-  buscarColaborador(ced);
+  buscarColaborador();
 })();
 
 } // fin guard _colaboradorLoaded

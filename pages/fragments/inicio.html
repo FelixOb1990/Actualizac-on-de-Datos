@@ -99,10 +99,11 @@
 </style>
 
 <script>
-(function() {
+(
+  function() {
   const user = JSON.parse(localStorage.getItem('user') || '{}');
-  const nombre = user.Title || user.Nombre1 || '';
-  const el = document.getElementById('greetName');
-  if (el && nombre) el.textContent = nombre;
+  const nombre = user['Title'];
+  document.getElementById('greetName').value = 'Bienvenido, ' + nombre;
+  
 })();
 </script>
