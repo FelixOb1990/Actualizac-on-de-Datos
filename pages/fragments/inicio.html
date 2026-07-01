@@ -1,0 +1,109 @@
+<!-- fragments/inicio.html -->
+<div class="frag-inicio">
+
+  <div class="frag-greeting">
+    <h1 class="frag-title">Bienvenido, <span id="greetName">colaborador</span></h1>
+    <p class="frag-sub">Desde aquí podés gestionar tu información personal, plan médico y vacaciones.</p>
+  </div>
+
+  <div class="frag-cards">
+
+    <a href="#perfil" class="frag-card">
+      <div class="frag-card-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+      </div>
+      <div class="frag-card-body">
+        <h3>Mi Perfil</h3>
+        <p>Actualizá tus datos personales, contacto y ubicación.</p>
+      </div>
+      <div class="frag-card-arrow">→</div>
+    </a>
+
+    <a href="#medismart" class="frag-card">
+      <div class="frag-card-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+      </div>
+      <div class="frag-card-body">
+        <h3>Plan Médico Medismart</h3>
+        <p>Gestioná a tu beneficiario del plan de salud.</p>
+      </div>
+      <div class="frag-card-arrow">→</div>
+    </a>
+
+    <a href="#vacaciones" class="frag-card">
+      <div class="frag-card-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+          <line x1="16" y1="2" x2="16" y2="6"/>
+          <line x1="8"  y1="2" x2="8"  y2="6"/>
+          <line x1="3"  y1="10" x2="21" y2="10"/>
+        </svg>
+      </div>
+      <div class="frag-card-body">
+        <h3>Vacaciones</h3>
+        <p>Consultá y solicitá tus días de descanso disponibles.</p>
+      </div>
+      <div class="frag-card-arrow">→</div>
+    </a>
+
+  </div>
+
+</div>
+
+<style>
+.frag-inicio { max-width: 860px; margin: 0 auto; }
+.frag-greeting { margin-bottom: 36px; }
+.frag-title { font-family: 'DM Serif Display', serif; font-size: 1.9rem; color: var(--green-dark); font-weight: 400; }
+.frag-title span { color: var(--green-mid); }
+.frag-sub { margin-top: 6px; color: #5a8a6a; font-size: 0.95rem; }
+
+.frag-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 18px; }
+
+.frag-card {
+  background: var(--white);
+  border: 1px solid var(--green-border);
+  border-radius: 14px;
+  padding: 24px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  text-decoration: none;
+  color: var(--text-dark);
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.frag-card:hover { box-shadow: 0 6px 24px rgba(0,0,0,0.09); transform: translateY(-2px); }
+
+.frag-card-icon {
+  width: 52px; height: 52px;
+  background: var(--green-light);
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--green-mid);
+  flex-shrink: 0;
+}
+.frag-card-body { flex: 1; }
+.frag-card-body h3 { font-size: 0.95rem; font-weight: 600; color: var(--green-dark); margin-bottom: 4px; }
+.frag-card-body p  { font-size: 0.82rem; color: #5a8a6a; line-height: 1.4; }
+.frag-card-arrow { color: var(--green-mid); font-size: 1.1rem; flex-shrink: 0; }
+</style>
+
+<script>
+(
+  function() {
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const nombre = user['Title'];
+  document.getElementById('greetName').value = 'Bienvenido, ' + nombre;
+  
+})();
+</script>
