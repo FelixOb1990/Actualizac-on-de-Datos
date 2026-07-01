@@ -8,8 +8,8 @@
 })();
 
 const FLOWS = {
-  GetUser: 'https://default1cf912e46be04485ada7ae59cd0c96.ee.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/6136466c51e4460f9fd72bfc50ba9a1e/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=fdA52CudlD1p6m5aexjW9C81yv1pfnuoRv_swIm2kO4'
-};
+  buscarColaborador:    'https://default1cf912e46be04485ada7ae59cd0c96.ee.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/09237870375841bf8de7e7fc257227aa/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=RjzdNhH6QV9epKmaWGCK-JfHxkief3lP_6bYuKbDHpg',
+  };
 
 async function callFlow(url, body) {
   const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
@@ -23,7 +23,7 @@ async function buscarColaborador() {
   if (!ced) { showAlert('alertGlobal', 'error', 'Ingrese un número de cédula.'); return; }
   setLoading(true); hideAlert('alertGlobal');
   try {
-    const data = await callFlow(FLOWS.GetUser, { cedula: ced });
+    const data = await callFlow(FLOWS.buscarColaborador, { cedula: ced, operacion: 3, datos: {} });
     if (!data.items || data.items.length === 0) {
       showAlert('alertGlobal', 'error', 'No se encontró ningún colaborador con esa cédula.');
       return;
