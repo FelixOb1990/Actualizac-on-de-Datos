@@ -6,10 +6,9 @@
 
 (function () {
 
-const FLOW_URL = 'REEMPLAZAR_CON_URL_DEL_FLUJO';
+const FLOW_URL = 'https://default1cf912e46be04485ada7ae59cd0c96.ee.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/09237870375841bf8de7e7fc257227aa/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=RjzdNhH6QV9epKmaWGCK-JfHxkief3lP_6bYuKbDHpg';
 
 const user = JSON.parse(localStorage.getItem('user') || '{}');
-const ced  = user['Cedula'] || user['cedula'] || '';
 
 let solicitudACancelarId = null;
 
@@ -37,7 +36,7 @@ async function callFlow(operacion, datos) {
   const res = await fetch(FLOW_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ cedula: ced, operacion, datos })
+    body: JSON.stringify({ cedula: user['Cedulaa'], operacion, datos })
   });
   if (!res.ok) throw new Error('Error ' + res.status + ': ' + res.statusText);
   const text = await res.text();
@@ -101,10 +100,10 @@ function formatFecha(isoStr) {
 
 async function cargarResumen() {
   try {
-    const data = await callFlow(1, {});
-    g('diasLey').textContent       = data.ley        ?? '--';
-    g('diasAntiguedad').textContent = data.antiguedad ?? '--';
-    g('diasCumple').textContent    = data.cumpleanos  ?? '--';
+    console.log('Resumen de vacaciones:', user);
+    g('diasLey').textContent       = user['D_x00ed_asdeLey']        ?? '--';
+    g('diasAntiguedad').textContent = user['Antig_x00fc_edad'] ?? '--';
+    g('diasCumple').textContent    = user['Cumplea_x00f1_os']  ?? '--';
   } catch(e) {
     ['diasLey','diasAntiguedad','diasCumple'].forEach(id => g(id).textContent = '--');
   }
@@ -262,7 +261,7 @@ setTimeout(() => {
 
 // ── Inicio ────────────────────────────────────────────────────
 (async function init() {
-  if (!ced) { showAlert('alertGlobal','error','No se encontró la cédula del usuario.'); return; }
+  if (!user['Cedulaa']) { showAlert('alertGlobal','error','No se encontró la cédula del usuario.'); return; }
   setLoading(true);
   try {
     await Promise.all([cargarResumen(), cargarHistorial()]);
