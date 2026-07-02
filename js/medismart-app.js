@@ -6,7 +6,8 @@
 
 (function () {
 
-const FLOW_BENEFICIARIO = 'https://default1cf912e46be04485ada7ae59cd0c96.ee.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/e4ecce12ae4d4d8cac69c0c830d782a2/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=GOgMRphPg3hSnSVpAI4fDIBPjvjXIUAsm-srCsWVKds';
+const FLOW_BENEFICIARIO = 'https://default1cf912e46be04485ada7ae59cd0c96.ee.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/09237870375841bf8de7e7fc257227aa/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=RjzdNhH6QV9epKmaWGCK-JfHxkief3lP_6bYuKbDHpg';
+const user = JSON.parse(localStorage.getItem('user') || '{}');
 
 const PROVINCIAS = [
   {c:1,n:'San José'},{c:2,n:'Alajuela'},{c:3,n:'Cartago'},
@@ -120,11 +121,11 @@ let tieneBenef  = false;
 
 // ── Helpers ───────────────────────────────────────────────────
 
-async function callFlow(url, body) {
-  const res = await fetch(url, {
+async function callFlow(operacion, datos) {
+  const res = await fetch(FLOW_BENEFICIARIO, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body)
+    body: JSON.stringify({ cedula: user['Cedulaa'], operacion, datos })
   });
   if (!res.ok) throw new Error('Error ' + res.status + ': ' + res.statusText);
   const text = await res.text();
@@ -218,13 +219,11 @@ function llenarForm(f) {
 }
 
 async function cargarBeneficiario() {
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
-  const ced  = user['Cedula'] || user['cedula'] || '';
-  if (!ced) { showAlert('alertGlobal', 'error', 'No se encontró la cédula del usuario.'); return; }
-
+  console.log(user['Cedulaa']);
+  if (!user['Cedulaa']) { showAlert('alertGlobal', 'error', 'No se encontró la cédula del usuario.'); return; }
   setLoading(true);
   try {
-    const data = await callFlow(FLOW_BENEFICIARIO, { accion: 'buscar', titular: ced });
+    const data = await callFlow('GetBeneficiario', {} );
     if (data.items && data.items.length > 0) {
       benefItemId = data.items[0].ID;
       tieneBenef  = true;

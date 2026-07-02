@@ -100,7 +100,6 @@ function formatFecha(isoStr) {
 
 async function cargarResumen() {
   try {
-    console.log('Resumen de vacaciones:', user);
     g('diasLey').textContent       = user['D_x00ed_asdeLey']        ?? '--';
     g('diasAntiguedad').textContent = user['Antig_x00fc_edad'] ?? '--';
     g('diasCumple').textContent    = user['Cumplea_x00f1_os']  ?? '--';
@@ -113,7 +112,7 @@ async function cargarResumen() {
 
 async function cargarHistorial() {
   try {
-    const data      = await callFlow(4, {});
+    const data      = await callFlow('GetVacations', {});
     const container = g('vacHistorial');
     const empty     = g('vacHistorialEmpty');
 
@@ -128,15 +127,15 @@ async function cargarHistorial() {
       const estadoRaw  = s['Estado0']?.Value || s['Estado0'] || 'Pendiente';
       const estadoCls  = estadoRaw.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
       const esPendiente = estadoCls === 'pendiente';
-      const dias       = s['Dias'] ?? '';
+      const dias       = s['Cantidad'] ?? '';
 
       return `
         <div class="vac-item" id="sol-${s['ID']}">
           <div class="vac-item-info">
-            <strong>${formatFecha(s['FechaInicio'])} → ${formatFecha(s['FechaFin'])}</strong>
+            <strong>${formatFecha(s['FechaSolicitud'])} → ${formatFecha(s['Fin'])}</strong>
             <span>${s['Comentarios'] || ''}</span>
           </div>
-          <div class="vac-item-tipo">${s['TipoPermiso']?.Value || s['TipoPermiso'] || ''}</div>
+          <div class="vac-item-tipo">${s['Tipodepermiso']?.Value || s['Tipodepermiso'] || ''}</div>
           <div class="vac-item-dias">${dias}<small>días</small></div>
           <span class="vac-badge ${estadoCls}">${estadoRaw}</span>
           ${esPendiente

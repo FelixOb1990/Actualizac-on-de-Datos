@@ -37,7 +37,7 @@ async function callFlow(operacion, datos) {
   const res = await fetch(FLOW_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ cedula: ced, operacion, datos })
+    body: JSON.stringify({ cedula: user['Cedulaa'], operacion, datos })
   });
   if (!res.ok) throw new Error('Error ' + res.status + ': ' + res.statusText);
   const text = await res.text();
@@ -166,7 +166,8 @@ async function guardarTitular() {
     const ecMap = { 'Unión Libre': 'Union Libre' };
     const ecVal = ecMap[g('t_estadocivil').value] || g('t_estadocivil').value;
 
-    await callFlow(2, {
+    await callFlow('UpdateEmployee', {
+      itemID: titularItemId,
       Apellido1:   g('t_apellido1').value,
       Apellido2:   g('t_apellido2').value,
       Nombre1:     g('t_nombre1').value,

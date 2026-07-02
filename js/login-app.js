@@ -23,7 +23,7 @@ async function buscarColaborador() {
   if (!ced) { showAlert('alertGlobal', 'error', 'Ingrese un número de cédula.'); return; }
   setLoading(true); hideAlert('alertGlobal');
   try {
-    const data = await callFlow(FLOWS.buscarColaborador, { cedula: ced, operacion: 3, datos: {} });
+    const data = await callFlow(FLOWS.buscarColaborador, { cedula: ced, operacion: 'GetUser', datos: {} });
     if (!data.items || data.items.length === 0) {
       showAlert('alertGlobal', 'error', 'No se encontró ningún colaborador con esa cédula.');
       return;
@@ -32,7 +32,7 @@ async function buscarColaborador() {
       showAlert('alertGlobal', 'error', 'Contraseña incorrecta. Por favor, inténtelo de nuevo.');
       return;
     }
-    const userData = await callFlow(FLOWS.buscarColaborador, { cedula: ced, operacion: 1, datos: {} });
+    const userData = await callFlow(FLOWS.buscarColaborador, { cedula: ced, operacion: 'GetEmployee', datos: {} });
     localStorage.setItem('user', JSON.stringify(userData.items[0]));
     // replace() para que "atrás" desde el portal no regrese al login
     window.location.replace('./pages/main.html');
