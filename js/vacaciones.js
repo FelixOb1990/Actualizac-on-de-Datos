@@ -113,7 +113,7 @@ async function cargarResumen() {
 
 async function cargarHistorial() {
   try {
-    const data      = await callFlow(2, {});
+    const data      = await callFlow(4, {});
     const container = g('vacHistorial');
     const empty     = g('vacHistorialEmpty');
 
@@ -125,7 +125,7 @@ async function cargarHistorial() {
 
     empty.style.display = 'none';
     container.innerHTML = data.items.map(s => {
-      const estadoRaw  = s['Estado']?.Value || s['Estado'] || 'Pendiente';
+      const estadoRaw  = s['Estado0']?.Value || s['Estado0'] || 'Pendiente';
       const estadoCls  = estadoRaw.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
       const esPendiente = estadoCls === 'pendiente';
       const dias       = s['Dias'] ?? '';
