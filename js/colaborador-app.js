@@ -9,7 +9,6 @@
 const FLOW_URL = 'https://default1cf912e46be04485ada7ae59cd0c96.ee.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/09237870375841bf8de7e7fc257227aa/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=RjzdNhH6QV9epKmaWGCK-JfHxkief3lP_6bYuKbDHpg';
 
 const user = JSON.parse(localStorage.getItem('user') || '{}');
-const ced  = user['Cedula'] || user['cedula'] || '';
 
 let titularItemId = null;
 
@@ -142,18 +141,13 @@ function llenarTitular(f) {
 }
 
 async function buscarColaborador() {
-  if (!ced) { showAlert('alertGlobal', 'error', 'No se encontró la cédula del usuario.'); return; }
+  if (!user['Cedulaa']) { showAlert('alertGlobal', 'error', 'No se encontró la cédula del usuario.'); return; }
   setLoading(true); hideAlert('alertGlobal');
   const section = g('sectionTitular');
   if (section) section.classList.add('hidden');
   try {
-    const data = await callFlow(1, {});
-    if (!data.items || data.items.length === 0) {
-      showAlert('alertGlobal', 'error', 'No se encontró información del colaborador.');
-      return;
-    }
-    titularItemId = data.items[0].ID;
-    llenarTitular(data.items[0]);
+    titularItemId = user['ID'];
+    llenarTitular(user);
     if (section) section.classList.remove('hidden');
     habilitarCampos();
   } catch(e) {

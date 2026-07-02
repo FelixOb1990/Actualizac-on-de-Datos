@@ -32,7 +32,8 @@ async function buscarColaborador() {
       showAlert('alertGlobal', 'error', 'Contraseña incorrecta. Por favor, inténtelo de nuevo.');
       return;
     }
-    localStorage.setItem('user', JSON.stringify(data.items[0]));
+    const userData = await callFlow(FLOWS.buscarColaborador, { cedula: ced, operacion: 1, datos: {} });
+    localStorage.setItem('user', JSON.stringify(userData.items[0]));
     // replace() para que "atrás" desde el portal no regrese al login
     window.location.replace('./pages/main.html');
   } catch(e) {
