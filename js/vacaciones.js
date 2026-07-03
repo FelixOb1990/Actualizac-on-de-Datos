@@ -193,12 +193,15 @@ async function vacEnviarSolicitud() {
   btn.disabled = true; btn.textContent = 'Enviando...';
 
   try {
-    await callFlow(3, {
+    await callFlow('NewRegistro', {
+      cedula:     user['Cedulaa'],
+      Nombre:     user['Apellido1'] + ' ' + user['Apellido2']+ ' ' + user['Title']+ ' ' + user['Nombre2'],
       TipoPermiso:  tipo,
-      FechaInicio:  inicio,
-      FechaFin:     fin,
+      Inicio:  inicio,
+      Fin:     fin,
       Dias:         dias,
-      Comentarios:  comentario
+      Comentarios:  comentario,
+      TipoUsuario: 1
     });
 
     // Limpiar formulario

@@ -1,0 +1,104 @@
+.frag-page-header { margin-bottom: 28px; }
+.frag-page-header h1 { font-family:'DM Serif Display',serif; font-size:1.6rem; color:var(--green-dark); font-weight:400; }
+.frag-page-header p  { margin-top:4px; color:#5a8a6a; font-size:0.9rem; }
+
+/* Resumen */
+.vac-summary { margin-bottom: 24px; }
+.vac-stat {
+  background: var(--white);
+  border: 1px solid var(--green-border);
+  border-radius: 14px;
+  padding: 20px 28px;
+}
+.vac-stat-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #5a8a6a;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 16px;
+}
+.vac-stat-cols {
+  display: flex;
+  gap: 32px;
+}
+.vac-stat-item { text-align: center; }
+.vac-stat-value {
+  font-family: 'DM Serif Display', serif;
+  font-size: 2.2rem;
+  color: var(--green-dark);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.vac-stat-sub {
+  font-size: 0.78rem;
+  color: #5a8a6a;
+  background: var(--green-light);
+  border-radius: 20px;
+  padding: 2px 10px;
+  display: inline-block;
+}
+
+/* Cálculo */
+.vac-dias-calc {
+  margin-top: 16px;
+  padding: 12px 16px;
+  background: var(--green-light);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: var(--green-dark);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.vac-dias-detalle { font-size: 0.8rem; color: #5a8a6a; }
+
+/* Historial */
+.vac-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--green-border);
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.vac-item:last-child { border-bottom: none; }
+.vac-item-info { flex: 1; min-width: 180px; }
+.vac-item-info strong { display: block; font-size: 0.9rem; color: var(--green-dark); margin-bottom: 2px; }
+.vac-item-info span   { font-size: 0.8rem; color: #5a8a6a; }
+.vac-item-tipo { font-size: 0.82rem; color: var(--green-dark); font-weight: 500; min-width: 140px; }
+.vac-item-dias {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.4rem;
+  color: var(--green-dark);
+  text-align: center;
+  min-width: 48px;
+}
+.vac-item-dias small { display:block; font-family:'DM Sans',sans-serif; font-size:0.7rem; color:#5a8a6a; }
+.vac-badge { padding:4px 12px; border-radius:20px; font-size:0.75rem; font-weight:600; white-space:nowrap; }
+.vac-badge.pendiente { background:#fff8e1; color:#b45309; border:1px solid #fcd34d; }
+.vac-badge.aprobada  { background:var(--green-light); color:var(--green-dark); border:1px solid var(--green-border); }
+.vac-badge.rechazada { background:#fdecea; color:#c0392b; border:1px solid #f5c6c6; }
+.vac-item-cancel {
+  background:transparent; border:none; color:#c0392b;
+  font-size:0.82rem; cursor:pointer; padding:4px 8px;
+  border-radius:6px; font-family:'DM Sans',sans-serif;
+}
+.vac-item-cancel:hover { background:#fdecea; }
+
+.vac-historial-scroll {
+  max-height: 480px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--green-border) transparent;
+  padding-right: 4px;
+}
+.vac-historial-scroll::-webkit-scrollbar { width: 6px; }
+.vac-historial-scroll::-webkit-scrollbar-track { background: transparent; }
+.vac-historial-scroll::-webkit-scrollbar-thumb { background: var(--green-border); border-radius: 3px; }
+
+@media(max-width:600px) {
+  .vac-stat-cols { gap: 16px; }
+}
