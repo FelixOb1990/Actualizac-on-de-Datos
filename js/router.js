@@ -28,7 +28,7 @@ function esUsuarioGerencia() {
 })();
 
 const ROUTES = {
-  inicio:     { fragment: 'fragments/inicio.html',     script: null,                       label: 'Inicio' },
+  inicio:     { fragment: 'fragments/inicio.html',     script: '../js/inicio.js', label: 'Inicio' },
   perfil:     { fragment: 'fragments/perfil.html',     script: '../js/colaborador-app.js', label: 'Mi Perfil' },
   medismart:  { fragment: 'fragments/medismart.html',  script: '../js/medismart-app.js',   label: 'Plan Médico' },
   vacaciones: { fragment: 'fragments/vacaciones.html', script: '../js/vacaciones.js',       label: 'Vacaciones'},

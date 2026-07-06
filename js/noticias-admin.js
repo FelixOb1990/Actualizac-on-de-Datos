@@ -6,8 +6,7 @@
  */
 (function () {
 
-  // ⚠️ Reemplazar con la URL real del flow de Power Automate para Noticias
-  const FLOW_URL = 'https://REEMPLAZAR-CON-URL-DEL-FLOW-DE-NOTICIAS';
+  const FLOW_URL = 'https://default1cf912e46be04485ada7ae59cd0c96.ee.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/09237870375841bf8de7e7fc257227aa/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=RjzdNhH6QV9epKmaWGCK-JfHxkief3lP_6bYuKbDHpg';;
 
   const user = JSON.parse(localStorage.getItem('user') || '{}');
 
@@ -20,7 +19,7 @@
     const res = await fetch(FLOW_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ operacion, datos })
+      body: JSON.stringify({cedula: user['Cedula'], operacion, datos })
     });
     if (!res.ok) throw new Error('Error ' + res.status + ': ' + res.statusText);
     const text = await res.text();
