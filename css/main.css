@@ -103,11 +103,13 @@
   flex-direction: column;
   overflow-y: auto;
   min-width: 0;
+  align-items: center;
 }
 
 .page-content {
   flex: 1;
   padding: 36px 32px;
+  width: 60%;
 }
 
 /* ── Footer ── */

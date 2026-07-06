@@ -10,6 +10,8 @@
   <div class="alert" id="alertGlobal"></div>
 
   <div id="sectionTitular">
+
+    <!-- ── DATOS PERSONALES ── -->
     <div class="card">
       <div class="card-header"><h2>Datos Personales</h2></div>
       <div class="card-body">
@@ -27,9 +29,6 @@
           <div class="field"><label>Apellido 2</label><input type="text" id="t_apellido2" disabled></div>
           <div class="field"><label>Nombre 1</label><input type="text" id="t_nombre1" disabled></div>
           <div class="field"><label>Nombre 2</label><input type="text" id="t_nombre2" disabled></div>
-          <div class="field col-span-2"><label>Contacto Personal (Correo)</label><input type="email" id="t_contacto" disabled></div>
-          <div class="field"><label>Teléfono Primario</label><input type="tel" id="t_tel1" disabled maxlength="20"></div>
-          <div class="field"><label>Teléfono Secundario</label><input type="tel" id="t_tel2" disabled maxlength="20"></div>
           <div class="field"><label>Estado Civil</label>
             <select id="t_estadocivil" disabled>
               <option value="">Seleccione...</option>
@@ -37,8 +36,30 @@
               <option>Separado(a)</option><option>Divorciado(a)</option><option>Viudo(a)</option>
             </select>
           </div>
+          <!-- placeholder: falta conectar en colaborador-app.js -->
+          <div class="field"><label>Fecha de Nacimiento</label><input type="date" id="t_fechanacimiento" disabled></div>
+          <!-- placeholder: falta conectar en colaborador-app.js -->
+          <div class="field"><label>País de Nacimiento</label><input type="text" id="t_paisnacimiento" disabled></div>
         </div>
-        <div class="section-divider"><span>Ubicación</span></div>
+      </div>
+    </div>
+
+    <!-- ── CONTACTO ── -->
+    <div class="card">
+      <div class="card-header"><h2>Contacto</h2></div>
+      <div class="card-body">
+        <div class="form-grid">
+          <div class="field col-span-2"><label>Contacto Personal (Correo)</label><input type="email" id="t_contacto" disabled></div>
+          <div class="field"><label>Teléfono Primario</label><input type="tel" id="t_tel1" disabled maxlength="20"></div>
+          <div class="field"><label>Teléfono Secundario</label><input type="tel" id="t_tel2" disabled maxlength="20"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── UBICACIÓN ── -->
+    <div class="card">
+      <div class="card-header"><h2>Ubicación</h2></div>
+      <div class="card-body">
         <div class="form-grid three-col">
           <div class="field"><label>Provincia</label>
             <select id="t_provincia" onchange="cargarCantones('t')" disabled><option value="">Seleccione...</option></select>
@@ -49,13 +70,67 @@
           <div class="field"><label>Distrito</label>
             <select id="t_distrito" disabled><option value="">Seleccione cantón primero</option></select>
           </div>
-          <div class="field col-span-3"><label>Dirección Exacta</label><input type="text" id="t_direccion" disabled></div>
+          <div class="field col-span-3"><label>Dirección Exacta</label><textarea id="t_direccion" rows="3" disabled></textarea></div>
         </div>
       </div>
-      <div class="card-actions">
-        <button class="btn btn-primary" onclick="guardarTitular()" id="btnGuardarTitular">Guardar Cambios</button>
+    </div>
+
+    <!-- ── DATOS LABORALES ── -->
+    <div class="card">
+      <div class="card-header"><h2>Datos Laborales</h2></div>
+      <div class="card-body">
+        <div class="form-grid">
+          <!-- placeholder: falta conectar en colaborador-app.js -->
+          <div class="field"><label>Departamento</label><input type="text" id="t_departamento" disabled></div>
+          <!-- Puesto: no editable, por definición de negocio -->
+          <div class="field"><label>Puesto</label><input type="text" id="t_puesto" readonly></div>
+          <!-- placeholder: falta conectar en colaborador-app.js -->
+          <div class="field col-span-2"><label>Fecha de Ingreso</label><input type="date" id="t_fechaingreso" disabled></div>
+                    <!-- placeholder: falta conectar en colaborador-app.js -->
+          <div class="field col-span-2"><label>Correo Interno</label><input type="email" id="t_email" disabled></div>
+        </div>
       </div>
     </div>
+
+    <!-- ── ESTUDIOS Y PROFESIÓN ── -->
+    <div class="card">
+      <div class="card-header"><h2>Estudios y Profesión</h2></div>
+      <div class="card-body">
+        <div class="form-grid">
+          <!-- placeholder: falta conectar en colaborador-app.js -->
+          <div class="field">
+            <label>Profesión</label>
+            <select id="t_profesion">
+              <option value="">Seleccione...</option>
+              <!-- Reemplazar con la lista completa/oficial de la columna "Profesion" en SharePoint -->
+              <option>Técnico Medio</option>
+              <option>Bachillerato Ingeniería Agronómica</option>
+              <option>Licenciatura Ingeniería Agronómica</option>
+              <option>Diplomado en Administración de RRHH</option>
+            </select>
+          </div>
+          <!-- placeholder: falta conectar en colaborador-app.js.
+               Columna nueva en SharePoint: crearla como Choice con
+               "Permitir valores múltiples" activado. -->
+          <div class="field col-span-2">
+            <label>Estudios Complementarios</label>
+            <select id="t_estudioscomplementarios" multiple size="4">
+              <!-- Reemplazar con la lista completa/oficial de la columna "Estudios Complementarios" en SharePoint -->
+              <option>Bachillerato Ingeniería Agronómica</option>
+              <option>Licenciatura Ingeniería Agronómica</option>
+              <option>Diplomado en Asistente Ejecutiva</option>
+              <option>Diplomado en Administración de RRHH</option>
+              <option>Técnico Medio Secretaría</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-actions">
+      <button class="btn btn-primary" onclick="guardarTitular()" id="btnGuardarTitular">Guardar Cambios</button>
+    </div>
+
   </div>
 </div>
 
@@ -64,6 +139,22 @@
 .frag-page-header h1 { font-family: 'DM Serif Display', serif; font-size: 1.6rem; color: var(--green-dark); font-weight: 400; }
 .frag-page-header p  { margin-top: 4px; color: #5a8a6a; font-size: 0.9rem; }
 
+/* Evita que inputs/selects/textareas se desborden de su tarjeta,
+   sin importar el ancho que les dé colaborador-styles.css */
+.frag-perfil .field input,
+.frag-perfil .field select,
+.frag-perfil .field textarea {
+  width: 100%;
+  box-sizing: border-box;
+  max-width: 100%;
+}
+.frag-perfil .field textarea {
+  resize: vertical;
+  min-height: 70px;
+  font-family: inherit;
+}
+
 /* Reutiliza las clases de colaborador-styles.css que ya está en el proyecto.
    Si aún no está linkeada en main.html, agregar:
-   <link rel="stylesheet" href="../css/colaborador-styles.css"> en el <head> de main.html-->>
+   <link rel="stylesheet" href="../css/colaborador-styles.css"> en el <head> de main.html */
+</style>

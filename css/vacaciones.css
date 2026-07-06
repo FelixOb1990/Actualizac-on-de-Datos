@@ -1,6 +1,17 @@
-.frag-page-header { margin-bottom: 28px; }
-.frag-page-header h1 { font-family:'DM Serif Display',serif; font-size:1.6rem; color:var(--green-dark); font-weight:400; }
-.frag-page-header p  { margin-top:4px; color:#5a8a6a; font-size:0.9rem; }
+.frag-page-header { 
+  margin-bottom: 28px;
+}
+.frag-page-header h1 { 
+  font-family:'DM Serif Display',serif;
+  font-size:1.6rem;
+  color:var(--green-dark);
+  font-weight:400; 
+}
+.frag-page-header p  { 
+  margin-top:4px; 
+  color:#5a8a6a; 
+  font-size:0.9rem; 
+}
 
 /* Resumen */
 .vac-summary { margin-bottom: 24px; }

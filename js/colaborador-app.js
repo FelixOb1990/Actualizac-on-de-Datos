@@ -31,6 +31,22 @@ const DISTRITOS=[
   {c:601,n:'Puntarenas'},{c:601,n:'Pitahaya'},{c:601,n:'Chomes'},{c:601,n:'Lepanto'},{c:601,n:'Paquera'},{c:601,n:'Manzanillo'},{c:601,n:'Guacimal'},{c:601,n:'Barranca'},{c:601,n:'Isla del Coco'},{c:601,n:'Cóbano'},{c:601,n:'Chacarita'},{c:601,n:'Chira'},{c:601,n:'Acapulco'},{c:601,n:'El Roble'},{c:601,n:'Arancibia'},{c:602,n:'Espíritu Santo'},{c:602,n:'San Juan Grande'},{c:602,n:'Macacona'},{c:602,n:'San Rafael'},{c:602,n:'San Jerónimo'},{c:602,n:'Caldera'},{c:603,n:'Buenos Aires'},{c:603,n:'Volcán'},{c:603,n:'Potrero Grande'},{c:603,n:'Boruca'},{c:603,n:'Pilas'},{c:603,n:'Colinas'},{c:603,n:'Chánguena'},{c:603,n:'Biolley'},{c:603,n:'Brunka'},{c:604,n:'Miramar'},{c:604,n:'La Unión'},{c:604,n:'San Isidro'},{c:605,n:'Puerto Cortés'},{c:605,n:'Palmar'},{c:605,n:'Sierpe'},{c:605,n:'Bahía Ballena'},{c:605,n:'Piedras Blancas'},{c:605,n:'Bahía Drake'},{c:606,n:'Quepos'},{c:606,n:'Savegre'},{c:606,n:'Naranjito'},{c:607,n:'Golfito'},{c:607,n:'Puerto Jiménez'},{c:607,n:'Guaycará'},{c:607,n:'Pavón'},{c:608,n:'San Vito'},{c:608,n:'Sabalito'},{c:608,n:'Aguabuena'},{c:608,n:'Limoncito'},{c:608,n:'Pittier'},{c:608,n:'Gutiérrez Braun'},{c:609,n:'Parrita'},{c:610,n:'Corredor'},{c:610,n:'La Cuesta'},{c:610,n:'Canoas'},{c:610,n:'Laurel'},{c:611,n:'Jacó'},{c:611,n:'Tárcoles'},{c:611,n:'Lagunillas'},{c:612,n:'Monteverde'},
   {c:701,n:'Limón'},{c:701,n:'Valle La Estrella'},{c:701,n:'Río Blanco'},{c:701,n:'Matama'},{c:702,n:'Guápiles'},{c:702,n:'Jiménez'},{c:702,n:'Rita'},{c:702,n:'Roxana'},{c:702,n:'Cariari'},{c:702,n:'Colorado'},{c:702,n:'La Colonia'},{c:703,n:'Siquirres'},{c:703,n:'Pacuarito'},{c:703,n:'Florida'},{c:703,n:'Germania'},{c:703,n:'El Cairo'},{c:703,n:'Alegría'},{c:703,n:'Reventazón'},{c:704,n:'Bratsi'},{c:704,n:'Sixaola'},{c:704,n:'Cahuita'},{c:704,n:'Telire'},{c:705,n:'Matina'},{c:705,n:'Batán'},{c:705,n:'Carrandi'},{c:706,n:'Guácimo'},{c:706,n:'Mercedes'},{c:706,n:'Pocora'}
 ];
+const PROFESIONES = [
+  'Ingeniero','Abogado','Médico','Contador','Arquitecto','Enfermero','Profesor','Psicólogo','Diseñador Gráfico','Periodista',
+  'Ingeniero Agrónomo','Veterinario','Zootecnista','Administrador de Empresas','Economista','Auditor','Ingeniero Industrial','Ingeniero Civil','Ingeniero Mecánico','Ingeniero Eléctrico',
+  'Ingeniero Electrónico','Ingeniero Químico','Ingeniero Ambiental','Ingeniero en Sistemas','Ingeniero en Computación','Analista Programador','Técnico en Informática','Farmacéutico','Odontólogo','Nutricionista',
+  'Fisioterapeuta','Microbiólogo','Bioquímico','Biólogo','Químico','Físico','Matemático','Estadístico','Geólogo','Meteorólogo',
+  'Sociólogo','Antropólogo','Politólogo','Historiador','Filósofo','Bibliotecólogo','Archivista','Traductor','Lingüista','Filólogo',
+  'Diseñador Industrial','Diseñador de Interiores','Diseñador de Modas','Arquitecto Paisajista','Urbanista','Topógrafo','Delineante','Técnico en Construcción','Maestro de Obras','Electricista',
+  'Plomero','Soldador','Mecánico Automotriz','Técnico en Refrigeración','Ebanista','Carpintero','Sastre','Cocinero','Chef','Panadero',
+  'Repostero','Barista','Estilista','Cosmetólogo','Masajista','Entrenador Físico','Profesor de Educación Física','Terapeuta Ocupacional','Terapeuta del Lenguaje','Trabajador Social',
+  'Orientador Vocacional','Pedagogo','Bibliotecario Escolar','Piloto Aviador','Controlador Aéreo','Marino Mercante','Capitán de Barco','Chofer Profesional','Técnico en Logística','Ingeniero en Transporte',
+  'Actuario','Notario','Criminólogo','Investigador Forense','Oficial de Policía','Bombero','Paramédico','Técnico en Emergencias Médicas','Radiólogo','Técnico en Laboratorio Clínico',
+  'Fotógrafo','Cineasta','Productor Audiovisual','Editor de Video','Sonidista','Músico','Compositor','Actor','Bailarín','Artista Plástico',
+  'Ilustrador','Animador Digital','Community Manager','Especialista en Marketing','Publicista','Relacionista Público','Vendedor','Agente de Bienes Raíces','Corredor de Seguros','Banquero',
+  'Analista Financiero','Gestor de Recursos Humanos','Especialista en Recursos Humanos','Secretaria Ejecutiva','Asistente Administrativo','Recepcionista','Técnico en Contabilidad','Cajero','Agricultor','Ganadero',
+  'Técnico Agropecuario','Ingeniero Forestal','Ingeniero en Alimentos','Ingeniero de Minas','Ingeniero Naval','Ingeniero Biomédico','Ingeniero en Telecomunicaciones','Ingeniero en Mecatrónica','Especialista en Ciberseguridad','Científico de Datos'
+];
 // ── Helpers ───────────────────────────────────────────────────
 
 async function callFlow(operacion, datos) {
@@ -132,7 +148,13 @@ function llenarTitular(f) {
   g('t_contacto').value  = f['Email']                || '';
   g('t_tel1').value      = f['Telefonoprimario']     || '';
   g('t_tel2').value      = f['Telefonosecundario']   || '';
+  g('t_fechanacimiento').value      = f['Fechadenacimiento']   || '';
   g('t_genero').value    = f['Genero']?.Value        || '';
+  g('t_paisnacimiento').value      = f['PaisNacimiento']   || '';
+  g('t_departamento').value      = f['Departamento']?.Value || '';
+  g('t_puesto').value      = f['Puesto'] || '';
+  g('t_fechaingreso').value      = f['FechadeIngreso']   || '';
+  g('t_email').value      = f['ContactpPersonal']   || '';
   const ecMap = { 'Union Libre':'Unión Libre' };
   const ecRaw = f['EstadoCivil']?.Value              || '';
   g('t_estadocivil').value = ecMap[ecRaw] || ecRaw;
