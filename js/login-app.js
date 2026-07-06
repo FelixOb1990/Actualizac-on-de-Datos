@@ -55,3 +55,9 @@ function showAlert(id, type, msg) {
 function hideAlert(id) {
   document.getElementById(id).classList.remove('show');
 }
+
+document.getElementById('password').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') {
+    buscarColaborador();
+  }
+});
