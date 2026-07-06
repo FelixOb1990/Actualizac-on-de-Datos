@@ -1,0 +1,148 @@
+<!-- fragments/noticias-admin.html -->
+<div class="na-wrap">
+
+  <div class="frag-greeting">
+    <h1 class="frag-title">Noticias</h1>
+    <p class="frag-sub">Creá, editá y eliminá las noticias que ven todos los colaboradores en Inicio.</p>
+  </div>
+
+  <div id="alertNoticias" class="na-alert"></div>
+
+  <div class="na-card">
+    <h3 id="formTitle">Nueva noticia</h3>
+    <input type="hidden" id="n_itemid">
+
+    <div class="na-field">
+      <label>Título</label>
+      <input type="text" id="n_titulo" placeholder="Ej: Nuevo horario de atención">
+    </div>
+
+    <div class="na-field">
+      <label>Contenido</label>
+      <textarea id="n_contenido" rows="5" placeholder="Escribí el contenido de la noticia..."></textarea>
+    </div>
+
+    <div class="na-field">
+      <label>Imagen (opcional)</label>
+      <input type="hidden" id="n_imagen_url">
+      <div class="na-img-upload" id="na-img-upload" onclick="document.getElementById('n_imagen_file').click()">
+        <input type="file" id="n_imagen_file" accept="image/*" onchange="onImagenSelect(event)">
+        <div id="na-img-placeholder" class="na-img-placeholder">
+          <div class="icon">🖼️</div>
+          <p>Hacé clic para elegir una imagen</p>
+        </div>
+        <img id="na-img-preview" class="na-img-preview" style="display:none">
+      </div>
+      <button type="button" class="na-btn na-btn-ghost na-btn-sm" id="btnQuitarImagen" onclick="quitarImagen()" style="display:none">Quitar imagen</button>
+    </div>
+
+    <div class="na-form-actions">
+      <button class="na-btn na-btn-primary" id="btnGuardarNoticia" onclick="guardarNoticia()">Publicar noticia</button>
+      <button class="na-btn na-btn-ghost" id="btnCancelarEdicion" onclick="cancelarEdicion()" style="display:none">Cancelar edición</button>
+    </div>
+  </div>
+
+  <div class="na-card">
+    <h3>Noticias publicadas</h3>
+    <div id="noticiasList" class="na-list">
+      <div class="na-empty">Cargando noticias...</div>
+    </div>
+  </div>
+
+</div>
+
+<style>
+.na-wrap { max-width: 860px; margin: 0 auto; }
+
+.na-alert {
+  display: none;
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  margin-bottom: 18px;
+}
+.na-alert.show { display: block; }
+.na-alert.success { background: var(--green-light); color: var(--green-dark); }
+.na-alert.error   { background: #fdf0ef; color: #c0392b; }
+
+.na-card {
+  background: var(--white);
+  border: 1px solid var(--green-border);
+  border-radius: 14px;
+  padding: 24px;
+  margin-bottom: 20px;
+}
+.na-card h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--green-dark);
+  margin-bottom: 16px;
+}
+
+.na-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+.na-field label { font-size: 0.85rem; font-weight: 500; color: var(--text-dark); }
+.na-field input, .na-field textarea {
+  padding: 10px 13px;
+  border: 1.5px solid var(--green-border);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  color: var(--text-dark);
+  outline: none;
+  resize: vertical;
+  transition: border-color 0.15s;
+}
+.na-field input:focus, .na-field textarea:focus { border-color: var(--green-mid); }
+
+.na-form-actions { display: flex; gap: 10px; margin-top: 6px; }
+
+.na-img-upload {
+  border: 2px dashed var(--green-border);
+  border-radius: 10px;
+  padding: 18px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  margin-bottom: 8px;
+}
+.na-img-upload:hover { border-color: var(--green-mid); background: #f7fbf7; }
+.na-img-upload input[type="file"] { display: none; }
+.na-img-placeholder .icon { font-size: 24px; margin-bottom: 4px; }
+.na-img-placeholder p { font-size: 0.82rem; color: #5a8a6a; }
+.na-img-preview { max-width: 100%; max-height: 220px; border-radius: 8px; display: block; margin: 0 auto; }
+
+.na-item-img {
+  width: 84px; height: 84px; object-fit: cover;
+  border-radius: 8px; flex-shrink: 0;
+  border: 1px solid var(--green-border);
+}
+
+.na-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 10px 18px; border-radius: 8px;
+  font-family: inherit; font-size: 0.88rem; font-weight: 500;
+  cursor: pointer; border: none; transition: all 0.15s;
+}
+.na-btn-primary { background: var(--green-mid); color: var(--white); }
+.na-btn-primary:hover { opacity: 0.9; }
+.na-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+.na-btn-ghost { background: none; border: 1.5px solid var(--green-border); color: var(--text-dark); }
+.na-btn-ghost:hover { border-color: var(--green-mid); color: var(--green-dark); }
+.na-btn-danger { background: #fdf0ef; color: #c0392b; }
+.na-btn-danger:hover { background: #c0392b; color: white; }
+.na-btn-sm { padding: 6px 12px; font-size: 0.78rem; }
+
+.na-list { display: flex; flex-direction: column; gap: 12px; }
+.na-item {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 14px; padding: 16px; border-radius: 10px;
+  background: #f7fbf7; border: 1px solid var(--green-border);
+}
+.na-item-info { flex: 1; min-width: 0; }
+.na-item-title { font-size: 0.95rem; font-weight: 600; color: var(--green-dark); }
+.na-item-meta { font-size: 0.75rem; color: #5a8a6a; margin-top: 2px; margin-bottom: 8px; }
+.na-item-body { font-size: 0.85rem; color: var(--text-dark); line-height: 1.5; white-space: pre-wrap; }
+.na-item-actions { display: flex; gap: 6px; flex-shrink: 0; }
+
+.na-empty { text-align: center; padding: 30px; color: #5a8a6a; font-size: 0.88rem; }
+</style>

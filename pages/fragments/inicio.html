@@ -3,60 +3,11 @@
 
   <div class="frag-greeting">
     <h1 class="frag-title">Bienvenido, <span id="greetName">colaborador</span></h1>
-    <p class="frag-sub">Desde aquí podés gestionar tu información personal, plan médico y vacaciones.</p>
+    <p class="frag-sub">Enterate de las últimas novedades de la empresa.</p>
   </div>
 
-  <div class="frag-cards">
-
-    <a href="#perfil" class="frag-card">
-      <div class="frag-card-icon">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-             stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-          <circle cx="12" cy="7" r="4"/>
-        </svg>
-      </div>
-      <div class="frag-card-body">
-        <h3>Mi Perfil</h3>
-        <p>Actualizá tus datos personales, contacto y ubicación.</p>
-      </div>
-      <div class="frag-card-arrow">→</div>
-    </a>
-
-    <a href="#medismart" class="frag-card">
-      <div class="frag-card-icon">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-             stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-          <circle cx="9" cy="7" r="4"/>
-          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-          <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-        </svg>
-      </div>
-      <div class="frag-card-body">
-        <h3>Plan Médico Medismart</h3>
-        <p>Gestioná a tu beneficiario del plan de salud.</p>
-      </div>
-      <div class="frag-card-arrow">→</div>
-    </a>
-
-    <a href="#vacaciones" class="frag-card">
-      <div class="frag-card-icon">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-             stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-          <line x1="16" y1="2" x2="16" y2="6"/>
-          <line x1="8"  y1="2" x2="8"  y2="6"/>
-          <line x1="3"  y1="10" x2="21" y2="10"/>
-        </svg>
-      </div>
-      <div class="frag-card-body">
-        <h3>Vacaciones</h3>
-        <p>Consultá y solicitá tus días de descanso disponibles.</p>
-      </div>
-      <div class="frag-card-arrow">→</div>
-    </a>
-
+  <div id="noticiasFeed" class="frag-noticias">
+    <div class="frag-noticias-empty">Cargando noticias...</div>
   </div>
 
 </div>
@@ -68,42 +19,112 @@
 .frag-title span { color: var(--green-mid); }
 .frag-sub { margin-top: 6px; color: #5a8a6a; font-size: 0.95rem; }
 
-.frag-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 18px; }
+.frag-noticias { display: flex; flex-direction: column; gap: 16px; }
 
-.frag-card {
+.frag-noticia-card {
   background: var(--white);
   border: 1px solid var(--green-border);
   border-radius: 14px;
-  padding: 24px 20px;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  text-decoration: none;
-  color: var(--text-dark);
-  transition: box-shadow 0.2s, transform 0.2s;
+  padding: 22px 24px;
 }
-.frag-card:hover { box-shadow: 0 6px 24px rgba(0,0,0,0.09); transform: translateY(-2px); }
-
-.frag-card-icon {
-  width: 52px; height: 52px;
-  background: var(--green-light);
-  border-radius: 12px;
-  display: flex; align-items: center; justify-content: center;
+.frag-noticia-fecha {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   color: var(--green-mid);
-  flex-shrink: 0;
+  margin-bottom: 6px;
 }
-.frag-card-body { flex: 1; }
-.frag-card-body h3 { font-size: 0.95rem; font-weight: 600; color: var(--green-dark); margin-bottom: 4px; }
-.frag-card-body p  { font-size: 0.82rem; color: #5a8a6a; line-height: 1.4; }
-.frag-card-arrow { color: var(--green-mid); font-size: 1.1rem; flex-shrink: 0; }
+.frag-noticia-titulo {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--green-dark);
+  margin-bottom: 8px;
+}
+.frag-noticia-img {
+  width: 100%;
+  max-height: 320px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 12px;
+  display: block;
+}
+.frag-noticia-cuerpo {
+  font-size: 0.9rem;
+  color: var(--text-dark);
+  line-height: 1.55;
+  white-space: pre-wrap;
+}
+.frag-noticia-autor {
+  margin-top: 10px;
+  font-size: 0.8rem;
+  color: #5a8a6a;
+  font-style: italic;
+}
+
+.frag-noticias-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: #5a8a6a;
+  font-size: 0.9rem;
+  background: var(--white);
+  border: 1px solid var(--green-border);
+  border-radius: 14px;
+}
 </style>
 
 <script>
-(
-  function() {
+(function () {
+  // ⚠️ Reemplazar con la URL real del flow de Power Automate para Noticias
+  const FLOW_URL_NOTICIAS = 'https://REEMPLAZAR-CON-URL-DEL-FLOW-DE-NOTICIAS';
+
   const user = JSON.parse(localStorage.getItem('user') || '{}');
-  const nombre = user['Title'];
-  document.getElementById('greetName').value = 'Bienvenido, ' + nombre;
-  
+  document.getElementById('greetName').textContent = user['Title'] || 'colaborador';
+
+  function escHtml(str) {
+    return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function formatFecha(f) {
+    if (!f) return '';
+    const d = new Date(f);
+    if (isNaN(d)) return '';
+    return d.toLocaleDateString('es-CR', { day: '2-digit', month: 'short', year: 'numeric' });
+  }
+
+  async function cargarNoticias() {
+    const cont = document.getElementById('noticiasFeed');
+    try {
+      const res = await fetch(FLOW_URL_NOTICIAS, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ operacion: 'GetNoticias', datos: {} })
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      const noticias = Array.isArray(data) ? data : (data.value || []);
+
+      if (!noticias.length) {
+        cont.innerHTML = '<div class="frag-noticias-empty">No hay noticias por el momento.</div>';
+        return;
+      }
+
+      const ordenadas = [...noticias].sort((a, b) => new Date(b.FechaPublicacion) - new Date(a.FechaPublicacion));
+
+      cont.innerHTML = ordenadas.map(n => `
+        <div class="frag-noticia-card">
+          <div class="frag-noticia-fecha">${escHtml(formatFecha(n.FechaPublicacion))}</div>
+          <h3 class="frag-noticia-titulo">${escHtml(n.Title)}</h3>
+          ${n.ImagenURL ? `<img class="frag-noticia-img" src="${escHtml(n.ImagenURL)}" alt="">` : ''}
+          <p class="frag-noticia-cuerpo">${escHtml(n.Contenido)}</p>
+          ${n.Autor ? `<div class="frag-noticia-autor">— ${escHtml(n.Autor)}</div>` : ''}
+        </div>
+      `).join('');
+    } catch (e) {
+      cont.innerHTML = '<div class="frag-noticias-empty">No se pudieron cargar las noticias.</div>';
+    }
+  }
+
+  cargarNoticias();
 })();
 </script>

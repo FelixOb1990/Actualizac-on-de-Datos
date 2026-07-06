@@ -14,11 +14,25 @@
   }
 })();
 
+// ── Control de acceso por departamento ─────────────────────────
+// Por el momento, solo el departamento "Gerencia" puede administrar noticias.
+function esUsuarioGerencia() {
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  return user['Departamento']?.Value === 'Logistica';
+}
+
+// Mostrar/ocultar el ítem del sidebar según el departamento del usuario
+(function setupRestrictedNav() {
+  const navNoticias = document.getElementById('navNoticiasAdmin');
+  if (navNoticias) navNoticias.style.display = esUsuarioGerencia() ? '' : 'none';
+})();
+
 const ROUTES = {
   inicio:     { fragment: 'fragments/inicio.html',     script: null,                       label: 'Inicio' },
   perfil:     { fragment: 'fragments/perfil.html',     script: '../js/colaborador-app.js', label: 'Mi Perfil' },
   medismart:  { fragment: 'fragments/medismart.html',  script: '../js/medismart-app.js',   label: 'Plan Médico' },
   vacaciones: { fragment: 'fragments/vacaciones.html', script: '../js/vacaciones.js',       label: 'Vacaciones'},
+  'noticias-admin': { fragment: 'fragments/noticias-admin.html', script: '../js/noticias-admin.js', label: 'Noticias (Admin)', restricted: true },
 };
 
 const DEFAULT_ROUTE = 'inicio';
@@ -29,7 +43,12 @@ let currentScript = null;
 
 function getRoute() {
   const hash = window.location.hash.replace('#', '').trim();
-  return ROUTES[hash] ? hash : DEFAULT_ROUTE;
+  const routeKey = ROUTES[hash] ? hash : DEFAULT_ROUTE;
+  // Si la ruta es restringida y el usuario no tiene permiso, cae a la ruta por defecto
+  if (ROUTES[routeKey].restricted && !esUsuarioGerencia()) {
+    return DEFAULT_ROUTE;
+  }
+  return routeKey;
 }
 
 function setActiveLink(routeKey) {

@@ -125,7 +125,7 @@ function habilitarCampos() {
 
 function llenarTitular(f) {
   g('t_cedula').value    = f['Cedulaa']             || '';
-  g('t_apellido1').value = f['Apellido1']            || '';
+  g('t_apellido1').value = f['pellido1']            || '';
   g('t_apellido2').value = f['Apellido2']            || '';
   g('t_nombre1').value   = f['Title']                || '';
   g('t_nombre2').value   = f['Nombre2']              || '';
