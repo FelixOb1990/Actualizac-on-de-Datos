@@ -50,6 +50,8 @@
       <div class="card-body">
         <div class="form-grid">
           <div class="field col-span-2"><label>Contacto Personal (Correo)</label><input type="email" id="t_contacto" disabled></div>
+          <!-- placeholder: falta conectar en colaborador-app.js -->
+          <div class="field col-span-2"><label>Email</label><input type="email" id="t_email" disabled></div>
           <div class="field"><label>Teléfono Primario</label><input type="tel" id="t_tel1" disabled maxlength="20"></div>
           <div class="field"><label>Teléfono Secundario</label><input type="tel" id="t_tel2" disabled maxlength="20"></div>
         </div>
@@ -86,8 +88,6 @@
           <div class="field"><label>Puesto</label><input type="text" id="t_puesto" readonly></div>
           <!-- placeholder: falta conectar en colaborador-app.js -->
           <div class="field col-span-2"><label>Fecha de Ingreso</label><input type="date" id="t_fechaingreso" disabled></div>
-                    <!-- placeholder: falta conectar en colaborador-app.js -->
-          <div class="field col-span-2"><label>Correo Interno</label><input type="email" id="t_email" disabled></div>
         </div>
       </div>
     </div>
@@ -109,19 +109,10 @@
               <option>Diplomado en Administración de RRHH</option>
             </select>
           </div>
-          <!-- placeholder: falta conectar en colaborador-app.js.
-               Columna nueva en SharePoint: crearla como Choice con
-               "Permitir valores múltiples" activado. -->
+          <!-- placeholder: falta conectar en colaborador-app.js -->
           <div class="field col-span-2">
             <label>Estudios Complementarios</label>
-            <select id="t_estudioscomplementarios" multiple size="4">
-              <!-- Reemplazar con la lista completa/oficial de la columna "Estudios Complementarios" en SharePoint -->
-              <option>Bachillerato Ingeniería Agronómica</option>
-              <option>Licenciatura Ingeniería Agronómica</option>
-              <option>Diplomado en Asistente Ejecutiva</option>
-              <option>Diplomado en Administración de RRHH</option>
-              <option>Técnico Medio Secretaría</option>
-            </select>
+            <input type="text" id="t_estudioscomplementarios">
           </div>
         </div>
       </div>
