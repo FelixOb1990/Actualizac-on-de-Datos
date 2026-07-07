@@ -129,6 +129,12 @@ function setGeo(px, prov, cant, dist) {
   g(px+'_canton').value = c.c; cargarDistritos(px);
   if (dist) g(px+'_distrito').value = dist;
 }
+function poblarSelectProfesiones() {
+  const sel = g('t_profesion');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">Seleccione...</option>' +
+    PROFESIONES.map(p => `<option value="${p}">${p}</option>`).join('');
+}
 
 // ── Titular ───────────────────────────────────────────────────
 
@@ -141,7 +147,7 @@ function habilitarCampos() {
 
 function llenarTitular(f) {
   g('t_cedula').value    = f['Cedulaa']             || '';
-  g('t_apellido1').value = f['pellido1']            || '';
+  g('t_apellido1').value = f['Apellido1']            || '';
   g('t_apellido2').value = f['Apellido2']            || '';
   g('t_nombre1').value   = f['Title']                || '';
   g('t_nombre2').value   = f['Nombre2']              || '';
@@ -160,6 +166,23 @@ function llenarTitular(f) {
   g('t_estadocivil').value = ecMap[ecRaw] || ecRaw;
   g('t_direccion').value = f['Direccion']            || '';
   setGeo('t', f['Provincia'] || '', f['Cant_x00f3_n'] || '', f['Distrito'] || '');
+  // ── Profesión ──────────────────────────────────────────────
+  poblarSelectProfesiones();
+  const profesionGuardada = f['Profesion'] || '';
+  const selProfesion = g('t_profesion');
+  if (selProfesion && profesionGuardada) {
+    selProfesion.value = profesionGuardada;
+    // Si el valor guardado no coincide con ninguna opción de la lista
+    // (ej. dato histórico con otra redacción), lo agregamos igual para
+    // no "perder" visualmente lo que ya tenía el colaborador guardado.
+    if (selProfesion.value !== profesionGuardada) {
+      const opt = document.createElement('option');
+      opt.value = profesionGuardada;
+      opt.textContent = profesionGuardada + ' (valor actual)';
+      selProfesion.appendChild(opt);
+      selProfesion.value = profesionGuardada;
+    }
+  }
 }
 
 async function buscarColaborador() {
