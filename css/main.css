@@ -149,9 +149,13 @@
 .page-error p { font-size: 0.85rem; }
 
 /* ── Responsive ── */
+@media (max-width: 1024px) {
+  .page-content { width: 85%; }
+}
+
 @media (max-width: 640px) {
   .sidebar { width: 52px; }
   .sidebar ul li a span { display: none; }
   .sidebar ul li a { justify-content: center; padding: 10px 0; }
-  .page-content { padding: 24px 16px; }
+  .page-content { width: 100%; padding: 24px 16px; }
 }

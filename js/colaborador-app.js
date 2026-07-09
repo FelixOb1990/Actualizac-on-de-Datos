@@ -49,8 +49,54 @@ function hideAlert(id) {
 }
 
 // ── Geografía ─────────────────────────────────────────────────
-// initProvincias(px), cargarCantones(px), cargarDistritos(px) y setGeo(px, ...)
-// ahora viven en js/geo-data.js (compartido con colaboradores-admin.js).
+
+function initProvincias() {
+  const el = g('t_provincia');
+  if (!el) return;
+  PROVINCIAS.forEach(p => {
+    const o = document.createElement('option');
+    o.value = p.c; o.textContent = p.n;
+    el.appendChild(o);
+  });
+}
+
+function cargarCantones(px) {
+  const pv = parseInt(g(px+'_provincia').value);
+  const cs = g(px+'_canton');
+  const ds = g(px+'_distrito');
+  cs.innerHTML = '<option value="">Seleccione cantón...</option>';
+  ds.innerHTML = '<option value="">Seleccione distrito...</option>';
+  cs.disabled = true; ds.disabled = true;
+  if (!pv) return;
+  CANTONES.filter(c => c.p === pv).forEach(c => {
+    const o = document.createElement('option');
+    o.value = c.c; o.textContent = c.n;
+    cs.appendChild(o);
+  });
+  cs.disabled = false;
+}
+
+function cargarDistritos(px) {
+  const cv = parseInt(g(px+'_canton').value);
+  const ds = g(px+'_distrito');
+  ds.innerHTML = '<option value="">Seleccione distrito...</option>';
+  ds.disabled = true;
+  if (!cv) return;
+  DISTRITOS.filter(d => d.c === cv).forEach(d => {
+    const o = document.createElement('option');
+    o.value = d.n; o.textContent = d.n;
+    ds.appendChild(o);
+  });
+  ds.disabled = false;
+}
+
+function setGeo(px, prov, cant, dist) {
+  const p = PROVINCIAS.find(x => x.n === prov); if (!p) return;
+  g(px+'_provincia').value = p.c; cargarCantones(px);
+  const c = CANTONES.find(x => x.p === p.c && x.n === cant); if (!c) return;
+  g(px+'_canton').value = c.c; cargarDistritos(px);
+  if (dist) g(px+'_distrito').value = dist;
+}
 
 // ── Titular ───────────────────────────────────────────────────
 
@@ -86,6 +132,23 @@ function llenarTitular(f) {
   g('t_estadocivil').value = ecMap[ecRaw] || ecRaw;
   g('t_direccion').value = f['Direccion']            || '';
   setGeo('t', f['Provincia'] || '', f['Cant_x00f3_n'] || '', f['Distrito'] || '');
+  // ── Profesión ──────────────────────────────────────────────
+  poblarSelectProfesiones();
+  const profesionGuardada = f['Profesion'] || '';
+  const selProfesion = g('t_profesion');
+  if (selProfesion && profesionGuardada) {
+    selProfesion.value = profesionGuardada;
+    // Si el valor guardado no coincide con ninguna opción de la lista
+    // (ej. dato histórico con otra redacción), lo agregamos igual para
+    // no "perder" visualmente lo que ya tenía el colaborador guardado.
+    if (selProfesion.value !== profesionGuardada) {
+      const opt = document.createElement('option');
+      opt.value = profesionGuardada;
+      opt.textContent = profesionGuardada + ' (valor actual)';
+      selProfesion.appendChild(opt);
+      selProfesion.value = profesionGuardada;
+    }
+  }
 }
 
 async function buscarColaborador() {
