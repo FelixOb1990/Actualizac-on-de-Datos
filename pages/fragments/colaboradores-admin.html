@@ -1,0 +1,146 @@
+<!-- fragments/colaboradores-admin.html — Administración de colaboradores (Gerencia) -->
+<div class="frag-perfil frag-admin-colaboradores">
+
+  <div class="frag-page-header">
+    <h1>Administrar Colaboradores</h1>
+    <p>Buscá a un colaborador por cédula para revisar o actualizar sus datos.</p>
+  </div>
+
+  <!-- ── BUSCADOR ── -->
+  <div class="card">
+    <div class="card-body">
+      <div class="alert" id="alertBusqueda"></div>
+      <div class="buscador-row">
+        <div class="field" style="flex:1">
+          <label>Cédula del colaborador</label>
+          <input type="text" id="buscar_cedula" placeholder="Ej: 1-1234-5678"
+                 onkeydown="if(event.key==='Enter'){ event.preventDefault(); buscarColaboradorAdmin(); }">
+        </div>
+        <button class="btn btn-primary" id="btnBuscar" onclick="buscarColaboradorAdmin()">Buscar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="loading" id="loadingState"><div class="spinner"></div><p>Buscando colaborador...</p></div>
+
+  <div id="sectionColaborador" class="hidden">
+
+    <div class="alert" id="alertColaborador"></div>
+
+    <!-- ── DATOS PERSONALES ── -->
+    <div class="card">
+      <div class="card-header"><h2>Datos Personales</h2></div>
+      <div class="card-body">
+        <div class="form-grid">
+          <div class="field"><label>Cédula</label><input type="text" id="a_cedula"></div>
+          <div class="field"><label>Género</label>
+            <select id="a_genero">
+              <option value="">Seleccione...</option>
+              <option>Masculino</option>
+              <option>Femenino</option>
+            </select>
+          </div>
+          <div class="field"><label>Apellido 1</label><input type="text" id="a_apellido1"></div>
+          <div class="field"><label>Apellido 2</label><input type="text" id="a_apellido2"></div>
+          <div class="field"><label>Nombre 1</label><input type="text" id="a_nombre1"></div>
+          <div class="field"><label>Nombre 2</label><input type="text" id="a_nombre2"></div>
+          <div class="field"><label>Estado Civil</label>
+            <select id="a_estadocivil">
+              <option value="">Seleccione...</option>
+              <option>Soltero(a)</option><option>Casado(a)</option><option>Unión Libre</option>
+              <option>Separado(a)</option><option>Divorciado(a)</option><option>Viudo(a)</option>
+            </select>
+          </div>
+          <div class="field"><label>Fecha de Nacimiento</label><input type="date" id="a_fechanacimiento"></div>
+          <div class="field"><label>País de Nacimiento</label><input type="text" id="a_paisnacimiento"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── CONTACTO ── -->
+    <div class="card">
+      <div class="card-header"><h2>Contacto</h2></div>
+      <div class="card-body">
+        <div class="form-grid">
+          <div class="field col-span-2"><label>Contacto Personal (Correo)</label><input type="email" id="a_contacto"></div>
+          <div class="field"><label>Teléfono Primario</label><input type="tel" id="a_tel1" maxlength="20"></div>
+          <div class="field"><label>Teléfono Secundario</label><input type="tel" id="a_tel2" maxlength="20"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── UBICACIÓN ── -->
+    <div class="card">
+      <div class="card-header"><h2>Ubicación</h2></div>
+      <div class="card-body">
+        <div class="form-grid three-col">
+          <div class="field"><label>Provincia</label>
+            <select id="a_provincia" onchange="cargarCantones('a')"><option value="">Seleccione...</option></select>
+          </div>
+          <div class="field"><label>Cantón</label>
+            <select id="a_canton" onchange="cargarDistritos('a')"><option value="">Seleccione provincia primero</option></select>
+          </div>
+          <div class="field"><label>Distrito</label>
+            <select id="a_distrito"><option value="">Seleccione cantón primero</option></select>
+          </div>
+          <div class="field col-span-3"><label>Dirección Exacta</label><textarea id="a_direccion" rows="3"></textarea></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── DATOS LABORALES ── -->
+    <div class="card">
+      <div class="card-header"><h2>Datos Laborales</h2></div>
+      <div class="card-body">
+        <div class="form-grid three-col">
+          <div class="field col-span-2"><label>Departamento</label><input type="text" id="a_departamento"></div>
+          <div class="field"><label>Puesto</label><input type="text" id="a_puesto"></div>
+          <div class="field"><label>Fecha de Ingreso</label><input type="date" id="a_fechaingreso"></div>
+          <div class="field col-span-2"><label>Correo Interno</label><input type="email" id="a_email"></div>
+          <div class="field"><label>Días de Ley disponibles</label><input type="text" id="a_diasley"></div>
+          <div class="field"><label>Días de Antigüedad disponibles</label><input type="text" id="a_diasantiguedad"></div>
+          <div class="field"><label>Días de cumpleaños</label><input type="text" id="a_diascumpleanos"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ESTUDIOS Y PROFESIÓN ── -->
+    <div class="card">
+      <div class="card-header"><h2>Estudios y Profesión</h2></div>
+      <div class="card-body">
+        <div class="form-grid">
+          <div class="field"><label>Profesión</label><input type="text" id="a_profesion" placeholder="Ej: Ingeniero Agrónomo"></div>
+          <div class="field col-span-2"><label>Estudios Complementarios</label><input type="text" id="a_estudioscomplementarios" placeholder="Ej: Diplomado en Administración de RRHH"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-actions">
+      <button class="btn btn-secondary" onclick="nuevaBusqueda()">Nueva búsqueda</button>
+      <button class="btn btn-primary" onclick="guardarColaboradorAdmin()" id="btnGuardarColaborador">Guardar Cambios</button>
+    </div>
+
+  </div>
+
+</div>
+
+<style>
+.frag-admin-colaboradores .buscador-row { display: flex; gap: 12px; align-items: flex-end; }
+@media (max-width: 600px) {
+  .frag-admin-colaboradores .buscador-row { flex-direction: column; align-items: stretch; }
+}
+
+/* Evita que inputs/selects/textareas se desborden de su tarjeta */
+.frag-perfil .field input,
+.frag-perfil .field select,
+.frag-perfil .field textarea {
+  width: 100%;
+  box-sizing: border-box;
+  max-width: 100%;
+}
+.frag-perfil .field textarea {
+  resize: vertical;
+  min-height: 70px;
+  font-family: inherit;
+}
+</style>

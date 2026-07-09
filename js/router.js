@@ -18,26 +18,30 @@
 // Por el momento, solo el departamento "Gerencia" puede administrar noticias.
 function esUsuarioGerencia() {
   const user = JSON.parse(localStorage.getItem('user') || '{}');
-  return user['Departamento']?.Value === 'Logistica';
+  return user['Cedulaa']=== '207420711';
 }
 
-// Mostrar/ocultar el ítem del sidebar según el departamento del usuario
+// Mostrar/ocultar los ítems del sidebar restringidos según el departamento del usuario
 (function setupRestrictedNav() {
+  const esGerencia = esUsuarioGerencia();
   const navNoticias = document.getElementById('navNoticiasAdmin');
-  if (navNoticias) navNoticias.style.display = esUsuarioGerencia() ? '' : 'none';
+  if (navNoticias) navNoticias.style.display = esGerencia ? '' : 'none';
+  const navColaboradores = document.getElementById('navColaboradoresAdmin');
+  if (navColaboradores) navColaboradores.style.display = esGerencia ? '' : 'none';
 })();
 
 const ROUTES = {
-  inicio:     { fragment: 'fragments/inicio.html',     script: '../js/inicio.js', label: 'Inicio' },
-  perfil:     { fragment: 'fragments/perfil.html',     script: '../js/colaborador-app.js', label: 'Mi Perfil' },
+  inicio:     { fragment: 'fragments/inicio.html',     script: null,                       label: 'Inicio' },
+  perfil:     { fragment: 'fragments/perfil.html',     script: ['../js/geo-data.js', '../js/colaborador-app.js'], label: 'Mi Perfil' },
   medismart:  { fragment: 'fragments/medismart.html',  script: '../js/medismart-app.js',   label: 'Plan Médico' },
   vacaciones: { fragment: 'fragments/vacaciones.html', script: '../js/vacaciones.js',       label: 'Vacaciones'},
   'noticias-admin': { fragment: 'fragments/noticias-admin.html', script: '../js/noticias-admin.js', label: 'Noticias (Admin)', restricted: true },
+  'colaboradores-admin': { fragment: 'fragments/colaboradores-admin.html', script: ['../js/geo-data.js', '../js/colaboradores-admin.js'], label: 'Administrar Colaboradores', restricted: true },
 };
 
 const DEFAULT_ROUTE = 'inicio';
 
-let currentScript = null;
+let currentScripts = [];
 
 // ── Utilidades ────────────────────────────────────────────────
 
@@ -66,11 +70,9 @@ function setTitle(label) {
   document.title = `${label} – DAC Colaboradores`;
 }
 
-function removeCurrentScript() {
-  if (currentScript) {
-    currentScript.remove();
-    currentScript = null;
-  }
+function removeCurrentScripts() {
+  currentScripts.forEach(s => s.remove());
+  currentScripts = [];
 }
 
 function loadScript(src) {
@@ -80,8 +82,18 @@ function loadScript(src) {
     s.onload = resolve;
     s.onerror = reject;
     document.body.appendChild(s);
-    currentScript = s;
+    currentScripts.push(s);
   });
+}
+
+// Carga uno o varios scripts, en orden, esperando cada uno antes del siguiente
+// (para que los scripts compartidos como geo-data.js estén listos antes que
+// el script que depende de ellos).
+async function loadScripts(scriptOrScripts) {
+  const list = Array.isArray(scriptOrScripts) ? scriptOrScripts : [scriptOrScripts];
+  for (const src of list) {
+    await loadScript(src);
+  }
 }
 
 // ── Navegación principal ──────────────────────────────────────
@@ -96,7 +108,7 @@ async function navigate() {
       <div class="page-spinner"></div>
     </div>`;
 
-  removeCurrentScript();
+  removeCurrentScripts();
   setActiveLink(routeKey);
   setSubtitle(route.label);
   setTitle(route.label);
@@ -107,7 +119,7 @@ async function navigate() {
     container.innerHTML = await res.text();
 
     if (route.script) {
-      await loadScript(route.script);
+      await loadScripts(route.script);
     }
   } catch (err) {
     container.innerHTML = `
