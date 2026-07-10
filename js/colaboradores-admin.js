@@ -65,8 +65,8 @@
     setLoading(true);
     try {
       // TODO: confirmar el nombre real de esta operación (la que usa el login)
-      const res = await callFlow(cedula, 'GetEmployee', {});
-      const f = Array.isArray(res) ? res : (res.items ? res.items[0] : res);
+      const res = await callFlow(cedula, 'BuscarColaborador', {});
+      const f = Array.isArray(res) ? res[0] : (res.value ? res.value[0] : res);
 
       if (!f || !f['ID']) {
         throw new Error('No se encontró ningún colaborador con esa cédula.');
@@ -98,10 +98,7 @@
     g('a_departamento').value    = f['Departamento']?.Value || '';
     g('a_puesto').value          = f['Puesto']          || '';
     g('a_fechaingreso').value    = (f['FechadeIngreso'] || '').slice(0, 10);
-    g('a_email').value           = f['ContactpPersonal'] || '';
-    g('a_diasley').value         = f['D_x00ed_asdeLey']          || 0;
-    g('a_diasantiguedad').value  = f['Antig_x00fc_edad']   || 0;
-    g('a_diascumpleanos').value  = f['Cumplea_x00f1_os']   || 0;
+    g('a_email').value           = f['ContactoPersonal'] || '';
     g('a_profesion').value       = f['Profesion']        || '';
     g('a_estudioscomplementarios').value = f['EstudiosComplementarios'] || '';
 

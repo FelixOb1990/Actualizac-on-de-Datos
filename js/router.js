@@ -18,7 +18,7 @@
 // Por el momento, solo el departamento "Gerencia" puede administrar noticias.
 function esUsuarioGerencia() {
   const user = JSON.parse(localStorage.getItem('user') || '{}');
-  return user['Cedulaa']=== '207420711';
+  return user['Departamento']?.Value === 'Gerencia';
 }
 
 // Mostrar/ocultar los ítems del sidebar restringidos según el departamento del usuario
