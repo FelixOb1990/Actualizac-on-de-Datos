@@ -78,7 +78,7 @@ function llenarTitular(f) {
   g('t_departamento').value      = f['Departamento']?.Value || '';
   g('t_puesto').value      = f['Puesto'] || '';
   g('t_fechaingreso').value      = (f['FechadeIngreso'] || '').slice(0, 10);
-  g('t_email').value      = f['ContactoPersonal']   || '';
+  g('t_email').value      = f['ContactpPersonal']   || '';
   g('t_profesion').value  = f['Profesion']           || '';
   g('t_estudioscomplementarios').value = f['EstudiosComplementarios'] || '';
   const ecMap = { 'Union Libre':'Unión Libre' };
@@ -87,8 +87,7 @@ function llenarTitular(f) {
   g('t_direccion').value = f['Direccion']            || '';
   setGeo('t', f['Provincia'] || '', f['Cant_x00f3_n'] || '', f['Distrito'] || '');
 }
-
-async function buscarColaborador() {
+async function CargaColaborador() {
   if (!user['Cedulaa']) { showAlert('alertGlobal', 'error', 'No se encontró la cédula del usuario.'); return; }
   setLoading(true); hideAlert('alertGlobal');
   const section = g('sectionTitular');
@@ -104,7 +103,6 @@ async function buscarColaborador() {
     setLoading(false);
   }
 }
-
 async function guardarTitular() {
   const btn = g('btnGuardarTitular');
   btn.disabled = true; btn.textContent = 'Guardando...'; hideAlert('alertTitular');
@@ -135,7 +133,7 @@ async function guardarTitular() {
       FechaIngreso:    g('t_fechaingreso').value,
       ContactoPersonal: g('t_email').value,
       Profesion:            g('t_profesion').value,
-      EstudiosComplementarios: g('t_estudioscomplementarios').value
+      EstudiosC: g('t_estudioscomplementarios').value
     });
     showAlert('alertTitular', 'success', '✓ Datos actualizados correctamente.');
   } catch(e) {
@@ -144,7 +142,6 @@ async function guardarTitular() {
     btn.disabled = false; btn.textContent = 'Guardar Cambios';
   }
 }
-
 // ── Exponer funciones para onclick del HTML ───────────────────
 window.cargarCantones = cargarCantones;
 window.cargarDistritos = cargarDistritos;
