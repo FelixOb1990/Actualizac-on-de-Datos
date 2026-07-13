@@ -78,13 +78,13 @@
           <div class="form-grid three-col">
             <div class="field">
               <label>Provincia</label>
-              <select id="b_provincia" onchange="msCargarCantones()">
+              <select id="b_provincia" onchange="cargarCantones('b')">
                 <option value="">Seleccione...</option>
               </select>
             </div>
             <div class="field">
               <label>Cantón</label>
-              <select id="b_canton" onchange="msCargarDistritos()" disabled>
+              <select id="b_canton" onchange="cargarDistritos('b')" disabled>
                 <option value="">Seleccione provincia primero</option>
               </select>
             </div>

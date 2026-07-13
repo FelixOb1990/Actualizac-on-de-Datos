@@ -1,4 +1,18 @@
-/* login-app.js */
+/**
+ * login-app.js
+ * Lógica de la página de login (index.html).
+ * Depende de js/shared.js (callFlow, g, setLoading, showAlert, hideAlert),
+ * cargado antes en index.html.
+ *
+ * NOTA DE UNIFICACIÓN: este archivo reemplaza tanto al login-app.js
+ * como al script.js originales, que eran casi duplicados entre sí
+ * (mismo comentario de cabecera, misma lógica de "si ya hay sesión
+ * redirigir", dos objetos FLOWS/FLOWS2 con la misma URL) y cuya
+ * interacción causaba un error real: script.js se cargaba después y
+ * sobrescribía la función global callFlow con una versión que
+ * dependía de una variable FLOW_URL nunca definida en ese archivo.
+ * script.js debe eliminarse del proyecto y quitarse de index.html.
+ */
 
 // Si ya hay sesión activa, ir directo al portal
 (function () {
@@ -7,61 +21,36 @@
   }
 })();
 
-const FLOWS2 = {
-  buscarColaborador:    'https://default1cf912e46be04485ada7ae59cd0c96.ee.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/09237870375841bf8de7e7fc257227aa/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=RjzdNhH6QV9epKmaWGCK-JfHxkief3lP_6bYuKbDHpg',
-  };
-
-async function callFlow(operacion, datos) {
-  const res = await fetch(FLOWS.buscarColaborador, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ operacion, datos })
-  });
-  if (!res.ok) throw new Error('Error ' + res.status + ': ' + res.statusText);
-  const text = await res.text();
-  return text ? JSON.parse(text) : {};
+async function BuscarData(operacion, datos) {
+  return callFlow(operacion, datos);
 }
 
 async function buscarColaborador() {
-  const ced = document.getElementById('username').value.trim();
+  const ced = g('username').value.trim();
   if (!ced) { showAlert('alertGlobal', 'error', 'Ingrese un número de cédula.'); return; }
   setLoading(true); hideAlert('alertGlobal');
   try {
-    const data = await BuscarData(ced, 'GetUser');
-    console.log('Data recibida:', data);
+    const data = await BuscarData('GetUser', { CedulaID: ced });
     if (!data.items || data.items.length === 0) {
       showAlert('alertGlobal', 'error', 'No se encontró ningún colaborador con esa cédula.');
       return;
     }
-    if (data.items[0]['contrasena'] != document.getElementById('password').value.trim()) {
+    if (data.items[0]['contrasena'] != g('password').value.trim()) {
       showAlert('alertGlobal', 'error', 'Contraseña incorrecta. Por favor, inténtelo de nuevo.');
       return;
     }
 
-    const userData = await BuscarData(ced, 'GetEmployee');
+    const userData = await BuscarData('GetEmployee', { CedulaID: ced });
     localStorage.setItem('user', JSON.stringify(userData.items[0]));
     // replace() para que "atrás" desde el portal no regrese al login
     window.location.replace('./pages/main.html');
-  } catch(e) {
+  } catch (e) {
     showAlert('alertGlobal', 'error', 'Error: ' + e.message);
   } finally {
     setLoading(false);
   }
 }
-function setLoading(show) {
-  document.getElementById('loadingState').style.display = show ? 'block' : 'none';
-}
-function showAlert(id, type, msg) {
-  const el = document.getElementById(id);
-  el.className = 'alert ' + type + ' show';
-  el.textContent = msg;
-  setTimeout(() => el.classList.remove('show'), 6000);
-}
-function hideAlert(id) {
-  document.getElementById(id).classList.remove('show');
-}
-document.getElementById('password').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') {
-    buscarColaborador();
-  }
+
+g('password').addEventListener('keydown', function (e) {
+  if (e.key === 'Enter') buscarColaborador();
 });

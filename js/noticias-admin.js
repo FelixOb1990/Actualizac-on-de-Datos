@@ -2,29 +2,22 @@
  * noticias-admin.js
  * CRUD de noticias para el panel de colaboradores.
  * Ruta protegida: solo accesible para el departamento "Gerencia" (ver router.js).
+ * Depende de js/shared.js (getUser, callFlow, g, escHtml, formatFecha).
  * Se ejecuta como IIFE — se reinicia limpio en cada navegación del router.
+ *
+ * NOTA: showAlert() de este archivo es propia (usa la clase .na-alert,
+ * distinta de .alert usada en el resto del proyecto), por eso NO se
+ * reemplazó por la showAlert(id, type, msg) de shared.js.
+ *
+ * NOTA: mantiene el bug preexistente de usar user['Cedula'] en vez de
+ * user['Cedulaa'] (la clave correcta en el resto del proyecto) al llamar
+ * a callFlow — no se corrige en esta pasada, a pedido explícito.
  */
 (function () {
 
-  const FLOW_URL = 'https://default1cf912e46be04485ada7ae59cd0c96.ee.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/09237870375841bf8de7e7fc257227aa/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=RjzdNhH6QV9epKmaWGCK-JfHxkief3lP_6bYuKbDHpg';;
-
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
-
+  const user = getUser();
   let noticias = [];
   let editandoId = null;
-
-  function g(id) { return document.getElementById(id); }
-
-  async function callFlow(operacion, datos) {
-    const res = await fetch(FLOW_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({cedula: user['Cedula'], operacion, datos })
-    });
-    if (!res.ok) throw new Error('Error ' + res.status + ': ' + res.statusText);
-    const text = await res.text();
-    return text ? JSON.parse(text) : {};
-  }
 
   function showAlert(type, msg) {
     const el = g('alertNoticias');
@@ -33,24 +26,13 @@
     setTimeout(() => el.classList.remove('show'), 5000);
   }
 
-  function escHtml(str) {
-    return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
-
-  function formatFecha(f) {
-    if (!f) return '';
-    const d = new Date(f);
-    if (isNaN(d)) return '';
-    return d.toLocaleDateString('es-CR', { day: '2-digit', month: 'short', year: 'numeric' });
-  }
-
   // ── Cargar y renderizar ──────────────────────────────────────
 
   async function cargarNoticias() {
     const list = g('noticiasList');
     list.innerHTML = '<div class="na-empty">Cargando noticias...</div>';
     try {
-      const res = await callFlow('GetNoticias', {});
+      const res = await callFlow('GetNoticias', { CedulaID: user['Cedula'] });
       noticias = Array.isArray(res) ? res : (res.value || []);
       renderLista();
     } catch (e) {
@@ -131,18 +113,10 @@
 
     try {
       if (editandoId) {
-        await callFlow('EditarNoticia', {
-          itemID: editandoId,
-          Title: titulo,
-          Contenido: contenido
-        });
+        await callFlow('EditarNoticia', { CedulaID: user['Cedula'], itemID: editandoId, Title: titulo, Contenido: contenido });
         showAlert('success', '✓ Noticia actualizada correctamente.');
       } else {
-        await callFlow('CrearNoticia', {
-          Title: titulo,
-          Contenido: contenido,
-          Autor: user['Title'] || ''
-        });
+        await callFlow('CrearNoticia', { CedulaID: user['Cedula'], Title: titulo, Contenido: contenido, Autor: user['Title'] || '' });
         showAlert('success', '✓ Noticia publicada correctamente.');
       }
       cancelarEdicion();
@@ -160,7 +134,7 @@
     if (!confirm(`¿Eliminar la noticia "${n ? n.Title : id}"?`)) return;
 
     try {
-      await callFlow('EliminarNoticia', { itemID: id });
+      await callFlow('EliminarNoticia', { CedulaID: user['Cedula'], itemID: id });
       showAlert('success', 'Noticia eliminada.');
       if (String(editandoId) === String(id)) cancelarEdicion();
       await cargarNoticias();

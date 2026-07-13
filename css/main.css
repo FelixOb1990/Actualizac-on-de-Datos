@@ -1,9 +1,7 @@
 /* ══════════════════════════════════════════════
-   main.css  —  Layout shell del portal DAC
+   main.css — Layout shell del portal DAC
+   Reset y variables viven en base.css.
    ══════════════════════════════════════════════ */
-
-/* ── Reset base ── */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 /* ── Shell: ocupa toda la pantalla en columna ── */
 .shell {
@@ -42,6 +40,50 @@
   transition: background 0.2s;
 }
 .toggle-btn:hover { background: rgba(255,255,255,0.12); }
+
+/* Logo + texto del header. Antes vivían en styles.css (borrado por
+   duplicar variables/reset con base.css) — esta parte SÍ era necesaria
+   y no debió perderse; queda unificada acá porque es específica del
+   shell del portal (login.css tiene su propia copia para index.html). */
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.header-logo {
+  background: var(--white);
+  border-radius: 10px;
+  width: 42px;
+  height: 42px;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.header-logo-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.header-text {
+  display: flex;
+  flex-direction: column;
+}
+.header-text .title {
+  color: var(--white);
+  font-family: 'DM Serif Display', serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.2;
+}
+.header-text .subtitle {
+  color: var(--green-accent);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  font-weight: 500;
+  margin-top: 2px;
+}
 
 /* ── Cuerpo: sidebar + contenido en fila ── */
 .shell-body {
@@ -117,7 +159,7 @@
   text-align: center;
   padding: 14px;
   font-size: 11px;
-  color: #5a8a6a;
+  color: var(--text-light);
   border-top: 1px solid var(--green-border);
   background: var(--white);
 }
@@ -137,12 +179,11 @@
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
 }
-@keyframes spin { to { transform: rotate(360deg); } }
 
 .page-error {
   text-align: center;
   padding: 60px 24px;
-  color: #5a8a6a;
+  color: var(--text-light);
 }
 .page-error-icon { font-size: 2.5rem; margin-bottom: 12px; }
 .page-error h2 { font-family: 'DM Serif Display', serif; color: var(--green-dark); margin-bottom: 8px; }

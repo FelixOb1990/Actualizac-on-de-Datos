@@ -1,15 +1,17 @@
 /**
- * vacaciones-app.js
+ * vacaciones.js
  * Módulo de solicitud y consulta de vacaciones.
+ * Depende de js/shared.js (getUser, callFlow, g, setLoading, showAlert).
  * IIFE — se reinicia limpio en cada navegación del router.
+ *
+ * NOTA: mantiene su propio formatFecha() local (distinto del de
+ * shared.js) porque necesita forzar 'T12:00:00' al parsear fechas
+ * "solo día" (YYYY-MM-DD) para evitar corrimientos de un día por
+ * zona horaria — el formatFecha genérico de shared.js no hace eso.
  */
-
 (function () {
 
-const FLOW_URL = 'https://default1cf912e46be04485ada7ae59cd0c96.ee.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/09237870375841bf8de7e7fc257227aa/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=RjzdNhH6QV9epKmaWGCK-JfHxkief3lP_6bYuKbDHpg';
-
-const user = JSON.parse(localStorage.getItem('user') || '{}');
-
+const user = getUser();
 let solicitudACancelarId = null;
 
 // ── Feriados de Costa Rica (se actualiza anualmente) ──────────
@@ -30,34 +32,6 @@ function getFeriados(anio) {
   ];
 }
 
-// ── Helper base ───────────────────────────────────────────────
-
-async function callFlow(operacion, datos) {
-  const res = await fetch(FLOW_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ cedula: user['Cedulaa'], operacion, datos })
-  });
-  if (!res.ok) throw new Error('Error ' + res.status + ': ' + res.statusText);
-  const text = await res.text();
-  return text ? JSON.parse(text) : {};
-}
-
-function g(id) { return document.getElementById(id); }
-
-function setLoading(show) {
-  const el = g('loadingState');
-  if (el) el.style.display = show ? 'block' : 'none';
-}
-
-function showAlert(id, type, msg) {
-  const el = g(id);
-  if (!el) return;
-  el.className = 'alert ' + type + ' show';
-  el.textContent = msg;
-  setTimeout(() => el.classList.remove('show'), 6000);
-}
-
 // ── Cálculo de días hábiles ───────────────────────────────────
 
 function calcularDias(inicioStr, finStr, esMedioDia) {
@@ -67,7 +41,6 @@ function calcularDias(inicioStr, finStr, esMedioDia) {
   const fin    = new Date(finStr    + 'T12:00:00');
   if (fin < inicio) return 0;
 
-  // Obtener feriados de todos los años en el rango
   const anios = new Set();
   for (let y = inicio.getFullYear(); y <= fin.getFullYear(); y++) anios.add(y);
   const feriados = new Set([...anios].flatMap(a => getFeriados(a)));
@@ -75,7 +48,7 @@ function calcularDias(inicioStr, finStr, esMedioDia) {
   let dias = 0;
   const d = new Date(inicio);
   while (d <= fin) {
-    const dow  = d.getDay();                             // 0=dom, 6=sab
+    const dow  = d.getDay();
     const iso  = d.toISOString().split('T')[0];
     const habil = dow !== 0 && dow !== 6 && !feriados.has(iso);
     if (habil) dias += esMedioDia ? 0.5 : 1;
@@ -100,10 +73,10 @@ function formatFecha(isoStr) {
 
 async function cargarResumen() {
   try {
-    g('diasLey').textContent       = user['D_x00ed_asdeLey']        ?? '--';
-    g('diasAntiguedad').textContent = user['Antig_x00fc_edad'] ?? '--';
-    g('diasCumple').textContent    = user['Cumplea_x00f1_os']  ?? '--';
-  } catch(e) {
+    g('diasLey').textContent        = user['D_x00ed_asdeLey']   ?? '--';
+    g('diasAntiguedad').textContent = user['Antig_x00fc_edad']  ?? '--';
+    g('diasCumple').textContent     = user['Cumplea_x00f1_os']  ?? '--';
+  } catch (e) {
     ['diasLey','diasAntiguedad','diasCumple'].forEach(id => g(id).textContent = '--');
   }
 }
@@ -112,7 +85,7 @@ async function cargarResumen() {
 
 async function cargarHistorial() {
   try {
-    const data      = await callFlow('GetVacations', {});
+    const data      = await callFlow('GetVacations', { CedulaID: user['Cedulaa'] });
     const container = g('vacHistorial');
     const empty     = g('vacHistorialEmpty');
 
@@ -143,7 +116,7 @@ async function cargarHistorial() {
             : '<div style="width:60px"></div>'}
         </div>`;
     }).join('');
-  } catch(e) {
+  } catch (e) {
     showAlert('alertGlobal', 'error', 'Error al cargar historial: ' + e.message);
   }
 }
@@ -204,7 +177,6 @@ async function vacEnviarSolicitud() {
       TipoUsuario: 1
     });
 
-    // Limpiar formulario
     g('vac_tipo').value        = '';
     g('vac_inicio').value      = '';
     g('vac_fin').value         = '';
@@ -214,7 +186,7 @@ async function vacEnviarSolicitud() {
     showAlert('alertSolicitud','success','✓ Solicitud enviada. Quedará pendiente de aprobación.');
     await Promise.all([cargarResumen(), cargarHistorial()]);
 
-  } catch(e) {
+  } catch (e) {
     showAlert('alertSolicitud','error','Error al enviar la solicitud: ' + e.message);
   } finally {
     btn.disabled = false; btn.textContent = 'Enviar Solicitud';
@@ -236,10 +208,10 @@ function vacCerrarModal() {
 async function vacConfirmarCancelar() {
   vacCerrarModal();
   try {
-    await callFlow(4, { itemId: solicitudACancelarId });
+    await callFlow(4, { CedulaID: user['Cedulaa'], itemId: solicitudACancelarId });
     showAlert('alertGlobal','success','✓ Solicitud cancelada.');
     await Promise.all([cargarResumen(), cargarHistorial()]);
-  } catch(e) {
+  } catch (e) {
     showAlert('alertGlobal','error','Error al cancelar: ' + e.message);
   }
 }

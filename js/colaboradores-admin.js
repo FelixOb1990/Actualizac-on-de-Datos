@@ -2,55 +2,21 @@
  * colaboradores-admin.js
  * Búsqueda y edición de cualquier colaborador por cédula.
  * Ruta protegida: solo accesible para el departamento "Gerencia" (ver router.js).
- * Depende de js/geo-data.js (cargado antes por router.js) para
- * PROVINCIAS/CANTONES/DISTRITOS y las funciones cargarCantones/cargarDistritos/setGeo.
+ * Depende de js/shared.js (callFlow, g, setLoading, showAlert, hideAlert)
+ * y js/geo-data.js (PROVINCIAS/CANTONES/DISTRITOS, initProvincias,
+ * cargarCantones, cargarDistritos, setGeo) — ambos cargados una sola vez
+ * desde main.html, antes de router.js.
  * Se ejecuta como IIFE — se reinicia limpio en cada navegación del router.
  */
 (function () {
 
-  // Mismo flow que colaborador-app.js. Confirmar que el nombre de la
-  // operación de búsqueda ('BuscarColaborador' abajo) coincide con la
-  // que ya usa el login — ajustar si el nombre real es distinto.
-  const FLOW_URL = 'https://default1cf912e46be04485ada7ae59cd0c96.ee.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/09237870375841bf8de7e7fc257227aa/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=RjzdNhH6QV9epKmaWGCK-JfHxkief3lP_6bYuKbDHpg';
-
   let itemIdActual = null;
   let cedulaActual = null;
 
-  function g(id) { return document.getElementById(id); }
-
   // A diferencia de colaborador-app.js (que siempre opera sobre la cédula
   // del usuario logueado), acá la cédula es la que se busca cada vez —
-  // por eso se pasa explícitamente en cada llamada.
-  async function callFlow(cedula, operacion, datos) {
-    const res = await fetch(FLOW_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ cedula, operacion, datos })
-    });
-    if (!res.ok) throw new Error('Error ' + res.status + ': ' + res.statusText);
-    const text = await res.text();
-    return text ? JSON.parse(text) : {};
-  }
-
-  function setLoading(show) {
-    const el = g('loadingState');
-    if (el) el.style.display = show ? 'block' : 'none';
-  }
-
-  function showAlert(id, type, msg) {
-    const el = g(id);
-    if (!el) return;
-    el.className = 'alert ' + type + ' show';
-    el.textContent = msg;
-    setTimeout(() => el.classList.remove('show'), 6000);
-  }
-
-  function hideAlert(id) {
-    const el = g(id);
-    if (el) el.classList.remove('show');
-  }
-
-  // ── Búsqueda ──────────────────────────────────────────────────
+  // por eso se incluye explícitamente como 'CedulaID' dentro de `datos`
+  // en cada llamada a callFlow(), en vez de depender del usuario en sesión.
 
   async function buscarColaboradorAdmin() {
     const cedula = g('buscar_cedula').value.trim();
@@ -64,9 +30,8 @@
 
     setLoading(true);
     try {
-      // TODO: confirmar el nombre real de esta operación (la que usa el login)
-      const res = await callFlow(cedula, 'BuscarColaborador', {});
-      const f = Array.isArray(res) ? res[0] : (res.value ? res.value[0] : res);
+      const res = await callFlow('GetEmployee', { CedulaID: cedula });
+      const f = res.items && res.items[0];
 
       if (!f || !f['ID']) {
         throw new Error('No se encontró ningún colaborador con esa cédula.');
@@ -119,8 +84,6 @@
     g('buscar_cedula').focus();
   }
 
-  // ── Guardado ──────────────────────────────────────────────────
-
   async function guardarColaboradorAdmin() {
     if (!itemIdActual || !cedulaActual) return;
 
@@ -134,29 +97,30 @@
       const ecMap = { 'Unión Libre': 'Union Libre' };
       const ecVal = ecMap[g('a_estadocivil').value] || g('a_estadocivil').value;
 
-      await callFlow(cedulaActual, 'UpdateEmployee', {
+      await callFlow('UpdateEmployee', {
         itemID: itemIdActual,
-        Cedulaa:     g('a_cedula').value,
-        Apellido1:   g('a_apellido1').value,
-        Apellido2:   g('a_apellido2').value,
-        Nombre1:     g('a_nombre1').value,
-        Nombre2:     g('a_nombre2').value,
-        Contacto:    g('a_contacto').value,
-        Genero:      g('a_genero').value,
-        Tel1:        g('a_tel1').value,
-        Tel2:        g('a_tel2').value,
+        CedulaID:  cedulaActual,
+        Cedulaa:   g('a_cedula').value,
+        Apellido1: g('a_apellido1').value,
+        Apellido2: g('a_apellido2').value,
+        Nombre1:   g('a_nombre1').value,
+        Nombre2:   g('a_nombre2').value,
+        Contacto:  g('a_contacto').value,
+        Genero:    g('a_genero').value,
+        Tel1:      g('a_tel1').value,
+        Tel2:      g('a_tel2').value,
         EstadoCivil: ecVal,
-        Provincia:   pe.options[pe.selectedIndex]?.text || '',
-        Canton:      ce.options[ce.selectedIndex]?.text || '',
-        Distrito:    g('a_distrito').value,
-        Direccion:   g('a_direccion').value,
+        Provincia: pe.options[pe.selectedIndex]?.text || '',
+        Canton:    ce.options[ce.selectedIndex]?.text || '',
+        Distrito:  g('a_distrito').value,
+        Direccion: g('a_direccion').value,
         FechaNacimiento: g('a_fechanacimiento').value,
         PaisNacimiento:  g('a_paisnacimiento').value,
         Departamento:    g('a_departamento').value,
         Puesto:          g('a_puesto').value,
         FechaIngreso:    g('a_fechaingreso').value,
         ContactoPersonal: g('a_email').value,
-        Profesion:               g('a_profesion').value,
+        Profesion: g('a_profesion').value,
         EstudiosComplementarios: g('a_estudioscomplementarios').value
       });
       showAlert('alertColaborador', 'success', '✓ Datos actualizados correctamente.');

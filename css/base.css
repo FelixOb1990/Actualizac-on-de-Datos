@@ -1,0 +1,83 @@
+/* ══════════════════════════════════════════════
+   base.css — Variables globales, reset y
+   componentes compartidos (alert, loading, spinner)
+   del portal DAC. Cargar ANTES que cualquier otro
+   CSS del proyecto (login.css, main.css,
+   colaborador-styles.css, etc.).
+
+   NOTA DE UNIFICACIÓN: antes había dos escalas de
+   verde ligeramente distintas repartidas entre
+   archivos (--gd:#1b5e20 en colaborador-styles.css
+   vs --green-dark:#1a5c2e en el resto). Se dejó una
+   sola paleta canónica abajo; los archivos que
+   usaban la variante quedaron actualizados para
+   consumir esta.
+   ══════════════════════════════════════════════ */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  /* Verdes de marca (unificados) */
+  --green-dark:    #1a5c2e;
+  --green-mid:     #2e7d46;
+  --green-strong:  #43a047; /* acento fuerte — ex --ga */
+  --green-soft:    #81c784; /* acento suave — ex --gl */
+  --green-accent:  #a8d5b5; /* acento pastel (login/sidebar) */
+  --green-light:   #e8f5ec; /* fondo general */
+  --green-pale:    #e8f5e9; /* fondo alerta success — ex --gp */
+  --green-border:  #c8e6cc;
+
+  /* Texto */
+  --text-dark:   #1a3d28; /* texto con tinte verde (marca) */
+  --text-strong: #111111; /* texto principal en formularios — ex --td */
+  --text-mid:    #333333; /* ex --tm */
+  --text-light:  #5a8a6a; /* texto secundario gris-verde */
+  --text-muted:  #777777; /* ex --tl */
+
+  /* Neutros */
+  --white:        #ffffff;
+  --cream:        #f9f9f9;
+  --border-light: #eeeeee; /* ex --cd */
+
+  /* Feedback */
+  --red:    #c0392b;
+  --red-bg: #fdecea; /* ex --rl */
+
+  /* Sombra / radio */
+  --shadow:    0 4px 24px rgba(0,0,0,0.10);  /* ex --sh */
+  --shadow-lg: 0 8px 40px rgba(0,0,0,0.15);  /* ex --shl */
+  --radius:    14px;                          /* ex --r */
+  --radius-sm: 8px;                           /* ex --rs */
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--green-light);
+  color: var(--text-dark);
+  min-height: 100vh;
+}
+
+/* ── Componentes compartidos: alertas y loading ──────────────── */
+.alert {
+  padding: 14px 20px;
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  margin-bottom: 20px;
+  display: none;
+}
+.alert.success { background: var(--green-pale); color: var(--green-dark); border-left: 4px solid var(--green-mid); }
+.alert.error   { background: var(--red-bg);      color: var(--red);       border-left: 4px solid var(--red); }
+.alert.show    { display: block; }
+
+.loading { display: none; text-align: center; padding: 40px; color: var(--text-muted); }
+.spinner {
+  width: 36px; height: 36px;
+  border: 3px solid var(--border-light);
+  border-top-color: var(--green-mid);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 12px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.hidden { display: none !important; }

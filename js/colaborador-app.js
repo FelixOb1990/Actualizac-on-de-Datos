@@ -1,62 +1,20 @@
 /**
  * colaborador-app.js
  * Carga y edita los datos del titular.
+ * Depende de js/shared.js (getUser, callFlow, g, setLoading, showAlert,
+ * hideAlert) y js/geo-data.js (PROVINCIAS/CANTONES/DISTRITOS,
+ * initProvincias, cargarCantones, cargarDistritos, setGeo) — ambos
+ * cargados una sola vez desde main.html, antes de router.js.
  * Se ejecuta como IIFE — se reinicia limpio en cada navegación del router.
  */
-
 (function () {
 
-const FLOW_URL = 'https://default1cf912e46be04485ada7ae59cd0c96.ee.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/09237870375841bf8de7e7fc257227aa/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=RjzdNhH6QV9epKmaWGCK-JfHxkief3lP_6bYuKbDHpg';
-
-const user = JSON.parse(localStorage.getItem('user') || '{}');
-
+const user = getUser();
 let titularItemId = null;
-
-// PROVINCIAS, CANTONES y DISTRITOS ahora viven en js/geo-data.js
-// (compartido con colaboradores-admin.js). Ver router.js: la ruta
-// 'perfil' carga geo-data.js antes que este archivo.
-// ── Helpers ───────────────────────────────────────────────────
-
-async function callFlow(operacion, datos) {
-  const res = await fetch(FLOW_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ cedula: user['Cedulaa'], operacion, datos })
-  });
-  if (!res.ok) throw new Error('Error ' + res.status + ': ' + res.statusText);
-  const text = await res.text();
-  return text ? JSON.parse(text) : {};
-}
-
-function g(id) { return document.getElementById(id); }
-
-function setLoading(show) {
-  const el = g('loadingState');
-  if (el) el.style.display = show ? 'block' : 'none';
-}
-
-function showAlert(id, type, msg) {
-  const el = g(id);
-  if (!el) return;
-  el.className = 'alert ' + type + ' show';
-  el.textContent = msg;
-  setTimeout(() => el.classList.remove('show'), 6000);
-}
-
-function hideAlert(id) {
-  const el = g(id);
-  if (el) el.classList.remove('show');
-}
-
-// ── Geografía ─────────────────────────────────────────────────
-// initProvincias(px), cargarCantones(px), cargarDistritos(px) y setGeo(px, ...)
-// ahora viven en js/geo-data.js (compartido con colaboradores-admin.js).
-
-// ── Titular ───────────────────────────────────────────────────
 
 function habilitarCampos() {
   ['t_apellido1','t_apellido2','t_nombre1','t_nombre2','t_contacto','t_tel1','t_tel2',
-   't_direccion','t_genero','t_estadocivil','t_provincia',
+   't_direccion','t_genero','t_estadocivil','t_provincia','t_canton','t_distrito',
    't_fechanacimiento','t_paisnacimiento','t_departamento','t_fechaingreso','t_email',
    't_profesion','t_estudioscomplementarios'].forEach(id => {
     const el = g(id); if (el) el.disabled = false;
@@ -72,21 +30,22 @@ function llenarTitular(f) {
   g('t_contacto').value  = f['Email']                || '';
   g('t_tel1').value      = f['Telefonoprimario']     || '';
   g('t_tel2').value      = f['Telefonosecundario']   || '';
-  g('t_fechanacimiento').value      = (f['Fechadenacimiento'] || '').slice(0, 10);
+  g('t_fechanacimiento').value = (f['Fechadenacimiento'] || '').slice(0, 10);
   g('t_genero').value    = f['Genero']?.Value        || '';
-  g('t_paisnacimiento').value      = f['PaisNacimiento']   || '';
-  g('t_departamento').value      = f['Departamento']?.Value || '';
-  g('t_puesto').value      = f['Puesto'] || '';
-  g('t_fechaingreso').value      = (f['FechadeIngreso'] || '').slice(0, 10);
-  g('t_email').value      = f['ContactpPersonal']   || '';
-  g('t_profesion').value  = f['Profesion']           || '';
+  g('t_paisnacimiento').value = f['PaisNacimiento']  || '';
+  g('t_departamento').value   = f['Departamento']?.Value || '';
+  g('t_puesto').value    = f['Puesto']               || '';
+  g('t_fechaingreso').value   = (f['FechadeIngreso'] || '').slice(0, 10);
+  g('t_email').value     = f['ContactpPersonal']     || '';
+  g('t_profesion').value = f['Profesion']            || '';
   g('t_estudioscomplementarios').value = f['EstudiosComplementarios'] || '';
   const ecMap = { 'Union Libre':'Unión Libre' };
-  const ecRaw = f['EstadoCivil']?.Value              || '';
+  const ecRaw = f['EstadoCivil']?.Value || '';
   g('t_estadocivil').value = ecMap[ecRaw] || ecRaw;
-  g('t_direccion').value = f['Direccion']            || '';
+  g('t_direccion').value = f['Direccion'] || '';
   setGeo('t', f['Provincia'] || '', f['Cant_x00f3_n'] || '', f['Distrito'] || '');
 }
+
 async function CargaColaborador() {
   if (!user['Cedulaa']) { showAlert('alertGlobal', 'error', 'No se encontró la cédula del usuario.'); return; }
   setLoading(true); hideAlert('alertGlobal');
@@ -97,12 +56,13 @@ async function CargaColaborador() {
     llenarTitular(user);
     if (section) section.classList.remove('hidden');
     habilitarCampos();
-  } catch(e) {
+  } catch (e) {
     showAlert('alertGlobal', 'error', 'Error: ' + e.message);
   } finally {
     setLoading(false);
   }
 }
+
 async function guardarTitular() {
   const btn = g('btnGuardarTitular');
   btn.disabled = true; btn.textContent = 'Guardando...'; hideAlert('alertTitular');
@@ -114,41 +74,43 @@ async function guardarTitular() {
 
     await callFlow('UpdateEmployee', {
       itemID: titularItemId,
-      Apellido1:   g('t_apellido1').value,
-      Apellido2:   g('t_apellido2').value,
-      Nombre1:     g('t_nombre1').value,
-      Nombre2:     g('t_nombre2').value,
-      Contacto:    g('t_contacto').value,
-      Genero:      g('t_genero').value,
-      Tel1:        g('t_tel1').value,
-      Tel2:        g('t_tel2').value,
+      CedulaID: user['Cedulaa'],
+      Apellido1: g('t_apellido1').value,
+      Apellido2: g('t_apellido2').value,
+      Nombre1:   g('t_nombre1').value,
+      Nombre2:   g('t_nombre2').value,
+      Contacto:  g('t_contacto').value,
+      Genero:    g('t_genero').value,
+      Tel1:      g('t_tel1').value,
+      Tel2:      g('t_tel2').value,
       EstadoCivil: ecVal,
-      Provincia:   pe.options[pe.selectedIndex]?.text || '',
-      Canton:      ce.options[ce.selectedIndex]?.text || '',
-      Distrito:    g('t_distrito').value,
-      Direccion:   g('t_direccion').value,
+      Provincia: pe.options[pe.selectedIndex]?.text || '',
+      Canton:    ce.options[ce.selectedIndex]?.text || '',
+      Distrito:  g('t_distrito').value,
+      Direccion: g('t_direccion').value,
       FechaNacimiento: g('t_fechanacimiento').value,
       PaisNacimiento:  g('t_paisnacimiento').value,
       Departamento:    g('t_departamento').value,
       FechaIngreso:    g('t_fechaingreso').value,
       ContactoPersonal: g('t_email').value,
-      Profesion:            g('t_profesion').value,
+      Profesion: g('t_profesion').value,
       EstudiosC: g('t_estudioscomplementarios').value
     });
     showAlert('alertTitular', 'success', '✓ Datos actualizados correctamente.');
-  } catch(e) {
+  } catch (e) {
     showAlert('alertTitular', 'error', 'Error: ' + e.message);
   } finally {
     btn.disabled = false; btn.textContent = 'Guardar Cambios';
   }
 }
+
 // ── Exponer funciones para onclick del HTML ───────────────────
-window.cargarCantones = cargarCantones;
-window.cargarDistritos = cargarDistritos;
+// (cargarCantones/cargarDistritos ya son globales vía geo-data.js,
+// no hace falta re-exponerlas)
 window.guardarTitular = guardarTitular;
 
 // ── Inicio ────────────────────────────────────────────────────
 initProvincias('t');
-buscarColaborador();
+CargaColaborador();
 
 })();

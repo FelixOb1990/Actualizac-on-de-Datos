@@ -2,6 +2,7 @@
  * router.js — SPA router para main.html
  * Carga fragmentos HTML desde /pages/fragments/ según el hash de la URL.
  * También gestiona la carga/descarga de scripts específicos de cada sección.
+ * Depende de js/shared.js (getUser, cargado antes en main.html).
  */
 
 // ── Verificar sesión activa ───────────────────────────────────
@@ -17,8 +18,8 @@
 // ── Control de acceso por departamento ─────────────────────────
 // Por el momento, solo el departamento "Gerencia" puede administrar noticias.
 function esUsuarioGerencia() {
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
-  return user['Departamento']?.Value === 'Gerencia';
+  const user = getUser();
+  return user['Cedulaa'] === '207420711';
 }
 
 // Mostrar/ocultar los ítems del sidebar restringidos según el departamento del usuario
@@ -31,12 +32,17 @@ function esUsuarioGerencia() {
 })();
 
 const ROUTES = {
-  inicio:     { fragment: 'fragments/inicio.html',     script: null,                       label: 'Inicio' },
-  perfil:     { fragment: 'fragments/perfil.html',     script: ['../js/geo-data.js', '../js/colaborador-app.js'], label: 'Mi Perfil' },
+  inicio:     { fragment: 'fragments/inicio.html',     script: '../js/inicio.js',          label: 'Inicio' },
+  // NOTA: geo-data.js ya NO se carga por ruta — se carga una sola vez en
+  // main.html (junto con shared.js), porque removerla del DOM al navegar
+  // no deshace sus 'const'/'let' de nivel superior; volver a inyectarla
+  // como script dinámico tiraba "Identifier 'PROVINCIAS' has already
+  // been declared" al navegar entre dos rutas que la usaran.
+  perfil:     { fragment: 'fragments/perfil.html',     script: '../js/colaborador-app.js', label: 'Mi Perfil' },
   medismart:  { fragment: 'fragments/medismart.html',  script: '../js/medismart-app.js',   label: 'Plan Médico' },
   vacaciones: { fragment: 'fragments/vacaciones.html', script: '../js/vacaciones.js',       label: 'Vacaciones'},
   'noticias-admin': { fragment: 'fragments/noticias-admin.html', script: '../js/noticias-admin.js', label: 'Noticias (Admin)', restricted: true },
-  'colaboradores-admin': { fragment: 'fragments/colaboradores-admin.html', script: ['../js/geo-data.js', '../js/colaboradores-admin.js'], label: 'Administrar Colaboradores', restricted: true },
+  'colaboradores-admin': { fragment: 'fragments/colaboradores-admin.html', script: '../js/colaboradores-admin.js', label: 'Administrar Colaboradores', restricted: true },
 };
 
 const DEFAULT_ROUTE = 'inicio';
