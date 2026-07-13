@@ -35,7 +35,7 @@
         <div class="frag-noticia-card">
           <div class="frag-noticia-fecha">${escHtml(formatFecha(n.FechaPublicacion))}</div>
           <h3 class="frag-noticia-titulo">${escHtml(n.Title)}</h3>
-          ${n.ImagenURL ? `<img class="frag-noticia-img" src="${escHtml(n.ImagenURL)}" alt="">` : ''}
+          ${n.ImagenBase64 ? `<img class="frag-noticia-img" src="data:image/jpeg;base64,${n.ImagenBase64}" alt="">` : ''}
           <p class="frag-noticia-cuerpo">${escHtml(n.Contenido)}</p>
           ${n.Autor ? `<div class="frag-noticia-autor">— ${escHtml(n.Autor)}</div>` : ''}
         </div>

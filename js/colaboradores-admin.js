@@ -131,10 +131,46 @@
     }
   }
 
+  // ── Eliminar ──────────────────────────────────────────────────
+  // TODO: 'DeleteEmployee' es un nombre supuesto (sigue el patrón de
+  // UpdateEmployee/GetEmployee) — confirmar el nombre real de esta
+  // operación en el flow y ajustar si es distinto.
+
+  function confirmarEliminarColaborador() {
+    if (!itemIdActual) return;
+    g('modalEliminarColaborador').classList.add('show');
+  }
+
+  function cerrarModalEliminarColaborador() {
+    g('modalEliminarColaborador').classList.remove('show');
+  }
+
+  async function eliminarColaboradorAdmin() {
+    cerrarModalEliminarColaborador();
+    if (!itemIdActual || !cedulaActual) return;
+
+    const btn = g('btnEliminarColaborador');
+    const textoOriginal = btn.textContent;
+    btn.disabled = true; btn.textContent = 'Eliminando...';
+
+    try {
+      await callFlow('DeleteEmployee', { CedulaID: cedulaActual, itemID: itemIdActual });
+      showAlert('alertBusqueda', 'success', '✓ Colaborador eliminado correctamente.');
+      nuevaBusqueda();
+    } catch (e) {
+      showAlert('alertColaborador', 'error', 'Error al eliminar: ' + e.message);
+    } finally {
+      btn.disabled = false; btn.textContent = textoOriginal;
+    }
+  }
+
   // ── Exponer funciones para onclick del HTML ───────────────────
   window.buscarColaboradorAdmin = buscarColaboradorAdmin;
   window.guardarColaboradorAdmin = guardarColaboradorAdmin;
   window.nuevaBusqueda = nuevaBusqueda;
+  window.confirmarEliminarColaborador = confirmarEliminarColaborador;
+  window.cerrarModalEliminarColaborador = cerrarModalEliminarColaborador;
+  window.eliminarColaboradorAdmin = eliminarColaboradorAdmin;
 
   // ── Inicio ──────────────────────────────────────────────────────
   initProvincias('a');

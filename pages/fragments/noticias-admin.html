@@ -23,8 +23,12 @@
     </div>
 
     <div class="na-field">
+      <label>Válida hasta</label>
+      <input type="date" id="n_validez">
+    </div>
+
+    <div class="na-field">
       <label>Imagen (opcional)</label>
-      <input type="hidden" id="n_imagen_url">
       <div class="na-img-upload" id="na-img-upload" onclick="document.getElementById('n_imagen_file').click()">
         <input type="file" id="n_imagen_file" accept="image/*" onchange="onImagenSelect(event)">
         <div id="na-img-placeholder" class="na-img-placeholder">

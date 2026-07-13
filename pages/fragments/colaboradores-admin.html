@@ -113,12 +113,25 @@
     </div>
 
     <div class="card-actions">
+      <button class="btn-danger" onclick="confirmarEliminarColaborador()" id="btnEliminarColaborador">Eliminar Colaborador</button>
       <button class="btn btn-secondary" onclick="nuevaBusqueda()">Nueva búsqueda</button>
       <button class="btn btn-primary" onclick="guardarColaboradorAdmin()" id="btnGuardarColaborador">Guardar Cambios</button>
     </div>
 
   </div>
 
+</div>
+
+<!-- Modal eliminar -->
+<div class="modal-overlay" id="modalEliminarColaborador">
+  <div class="modal">
+    <h3>Eliminar Colaborador</h3>
+    <p>¿Está seguro que desea eliminar a este colaborador? Esta acción no se puede deshacer.</p>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="cerrarModalEliminarColaborador()">Cancelar</button>
+      <button class="btn-danger" onclick="eliminarColaboradorAdmin()">Sí, eliminar</button>
+    </div>
+  </div>
 </div>
 
 <style>
@@ -140,4 +153,8 @@
   min-height: 70px;
   font-family: inherit;
 }
+
+/* El botón de eliminar va primero pero visualmente separado de las
+   acciones "normales" (nueva búsqueda / guardar) */
+.frag-admin-colaboradores .card-actions { justify-content: space-between; }
 </style>
