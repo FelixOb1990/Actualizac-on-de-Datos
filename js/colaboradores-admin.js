@@ -115,7 +115,7 @@
     g('a_departamento').value    = f['Departamento']?.Value || '';
     g('a_puesto').value          = f['Puesto']          || '';
     g('a_fechaingreso').value    = (f['FechadeIngreso'] || '').slice(0, 10);
-    g('a_email').value           = f['ContactoPersonal'] || '';
+    g('a_email').value           = f['ContactpPersonal'] || '';
     g('a_profesion').value       = f['Profesion']        || '';
     g('a_estudioscomplementarios').value = f['EstudiosComplementarios'] || '';
 
