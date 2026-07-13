@@ -20,6 +20,9 @@ function getUser() {
   return JSON.parse(localStorage.getItem('user') || '{}');
 }
 
+function getUserRol() {
+  return  JSON.parse(localStorage.getItem('UserRol') || '{}');
+}
 /**
  * Llama el flow compartido.
  * El flow en Power Automate recibe únicamente { operacion, datos } — la

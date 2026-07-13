@@ -40,6 +40,8 @@ async function buscarColaborador() {
       return;
     }
 
+    localStorage.setItem('UserRol', JSON.stringify(data.items[0]));
+
     const userData = await BuscarData('GetEmployee', { CedulaID: ced });
     localStorage.setItem('user', JSON.stringify(userData.items[0]));
     // replace() para que "atrás" desde el portal no regrese al login
