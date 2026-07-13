@@ -1,46 +1,98 @@
 /**
  * colaboradores-admin.js
- * Búsqueda y edición de cualquier colaborador por cédula.
+ * Lista, edición, creación y borrado de colaboradores.
  * Ruta protegida: solo accesible para el departamento "Gerencia" (ver router.js).
- * Depende de js/shared.js (callFlow, g, setLoading, showAlert, hideAlert)
+ * Depende de js/shared.js (callFlow, g, escHtml, setLoading, showAlert, hideAlert)
  * y js/geo-data.js (PROVINCIAS/CANTONES/DISTRITOS, initProvincias,
  * cargarCantones, cargarDistritos, setGeo) — ambos cargados una sola vez
  * desde main.html, antes de router.js.
  * Se ejecuta como IIFE — se reinicia limpio en cada navegación del router.
+ *
+ * TODO: 'GetEmployees' (listar todos) y 'NewEmployee' (crear) son nombres
+ * de operación SUPUESTOS, siguiendo el patrón de GetEmployee/UpdateEmployee
+ * y NewBeneficiario respectivamente. Confirmar los nombres reales en el
+ * flow y ajustar acá si son distintos. Lo mismo aplica a 'DeleteEmployee'.
  */
 (function () {
 
+  let colaboradores = [];
   let itemIdActual = null;
   let cedulaActual = null;
+  let modoCrear = false;
 
   // A diferencia de colaborador-app.js (que siempre opera sobre la cédula
-  // del usuario logueado), acá la cédula es la que se busca cada vez —
-  // por eso se incluye explícitamente como 'CedulaID' dentro de `datos`
-  // en cada llamada a callFlow(), en vez de depender del usuario en sesión.
+  // del usuario logueado), acá la cédula es la que se busca/edita cada
+  // vez — por eso se incluye explícitamente como 'CedulaID' dentro de
+  // `datos` en cada llamada a callFlow(), en vez de depender del usuario
+  // en sesión.
 
-  async function buscarColaboradorAdmin() {
-    const cedula = g('buscar_cedula').value.trim();
-    hideAlert('alertBusqueda');
-    g('sectionColaborador').classList.add('hidden');
+  function nombreColaborador(f) {
+    return [f['Title'], f['Nombre2'], f['Apellido1'], f['Apellido2']].filter(Boolean).join(' ');
+  }
 
-    if (!cedula) {
-      showAlert('alertBusqueda', 'error', 'Ingresá una cédula para buscar.');
+  // ── Lista de colaboradores ──────────────────────────────────────
+
+  async function cargarListaColaboradores() {
+    const list  = g('colaboradoresList');
+    const empty = g('colaboradoresListEmpty');
+    empty.classList.add('hidden');
+    list.innerHTML = '<div class="empty-state"><p>Cargando colaboradores...</p></div>';
+    try {
+      const res = await callFlow('GetEmployee2', {});
+      colaboradores = res.items || res.value || (Array.isArray(res) ? res : []);
+      renderListaColaboradores();
+    } catch (e) {
+      list.innerHTML = '';
+      showAlert('alertBusqueda', 'error', 'Error al cargar colaboradores: ' + e.message);
+    }
+  }
+
+  function renderListaColaboradores() {
+    const list  = g('colaboradoresList');
+    const empty = g('colaboradoresListEmpty');
+    if (!colaboradores.length) {
+      list.innerHTML = '';
+      empty.classList.remove('hidden');
       return;
     }
+    empty.classList.add('hidden');
+    const ordenados = [...colaboradores].sort((a, b) => nombreColaborador(a).localeCompare(nombreColaborador(b)));
+    list.innerHTML = ordenados.map(f => `
+      <div class="colab-list-item" data-cedula="${escHtml(f['Cedulaa'])}">
+        <div class="colab-list-name">${escHtml(nombreColaborador(f))}</div>
+        <div class="colab-list-meta">${escHtml(f['Cedulaa'] || '')}${f['Puesto'] ? ' · ' + escHtml(f['Puesto']) : ''}</div>
+      </div>
+    `).join('');
+  }
 
+  g('colaboradoresList').addEventListener('click', e => {
+    const item = e.target.closest('.colab-list-item');
+    if (!item) return;
+    seleccionarColaborador(item.dataset.cedula);
+  });
+
+  async function seleccionarColaborador(cedula) {
+    if (!cedula) return;
+    hideAlert('alertBusqueda');
+    g('sectionColaborador').classList.add('hidden');
     setLoading(true);
     try {
       const res = await callFlow('GetEmployee', { CedulaID: cedula });
       const f = res.items && res.items[0];
 
       if (!f || !f['ID']) {
-        throw new Error('No se encontró ningún colaborador con esa cédula.');
+        throw new Error('No se encontró ese colaborador.');
       }
 
+      modoCrear = false;
       itemIdActual = f['ID'];
       cedulaActual = cedula;
       llenarColaborador(f);
+      g('btnEliminarColaborador').style.display = '';
+      g('btnGuardarColaborador').textContent = 'Guardar Cambios';
+      g('formColaboradorTitle').textContent = 'Editar Colaborador';
       g('sectionColaborador').classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (e) {
       showAlert('alertBusqueda', 'error', e.message);
     } finally {
@@ -75,21 +127,56 @@
     setGeo('a', f['Provincia'] || '', f['Cant_x00f3_n'] || '', f['Distrito'] || '');
   }
 
-  function nuevaBusqueda() {
+  function limpiarFormColaborador() {
+    ['a_cedula','a_apellido1','a_apellido2','a_nombre1','a_nombre2','a_contacto','a_tel1','a_tel2',
+     'a_fechanacimiento','a_paisnacimiento','a_departamento','a_puesto','a_fechaingreso','a_email',
+     'a_profesion','a_estudioscomplementarios','a_direccion'].forEach(id => {
+      const el = g(id); if (el) el.value = '';
+    });
+    g('a_genero').value = '';
+    g('a_estadocivil').value = '';
+    g('a_provincia').value = '';
+    g('a_canton').innerHTML = '<option value="">Seleccione provincia primero</option>';
+    g('a_canton').disabled = true;
+    g('a_distrito').innerHTML = '<option value="">Seleccione cantón primero</option>';
+    g('a_distrito').disabled = true;
+  }
+
+  // ── Nuevo colaborador ────────────────────────────────────────────
+
+  function mostrarFormNuevoColaborador() {
+    modoCrear = true;
+    itemIdActual = null;
+    cedulaActual = null;
+    hideAlert('alertColaborador');
+    limpiarFormColaborador();
+    g('btnEliminarColaborador').style.display = 'none';
+    g('btnGuardarColaborador').textContent = 'Crear Colaborador';
+    g('formColaboradorTitle').textContent = 'Nuevo Colaborador';
+    g('sectionColaborador').classList.remove('hidden');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function cerrarFormColaborador() {
+    modoCrear = false;
     itemIdActual = null;
     cedulaActual = null;
     g('sectionColaborador').classList.add('hidden');
-    g('buscar_cedula').value = '';
-    hideAlert('alertBusqueda');
-    g('buscar_cedula').focus();
+    hideAlert('alertColaborador');
   }
 
+  // ── Guardar (crear o actualizar) ──────────────────────────────────
+
   async function guardarColaboradorAdmin() {
-    if (!itemIdActual || !cedulaActual) return;
+    const cedulaForm = g('a_cedula').value.trim();
+    if (!cedulaForm) {
+      showAlert('alertColaborador', 'error', 'La cédula es obligatoria.');
+      return;
+    }
 
     const btn = g('btnGuardarColaborador');
     const textoOriginal = btn.textContent;
-    btn.disabled = true; btn.textContent = 'Guardando...'; hideAlert('alertColaborador');
+    btn.disabled = true; btn.textContent = modoCrear ? 'Creando...' : 'Guardando...'; hideAlert('alertColaborador');
 
     try {
       const pe = g('a_provincia');
@@ -97,10 +184,9 @@
       const ecMap = { 'Unión Libre': 'Union Libre' };
       const ecVal = ecMap[g('a_estadocivil').value] || g('a_estadocivil').value;
 
-      await callFlow('UpdateEmployee', {
-        itemID: itemIdActual,
-        CedulaID:  cedulaActual,
-        Cedulaa:   g('a_cedula').value,
+      const datos = {
+        CedulaID:  modoCrear ? cedulaForm : cedulaActual,
+        Cedulaa:   cedulaForm,
         Apellido1: g('a_apellido1').value,
         Apellido2: g('a_apellido2').value,
         Nombre1:   g('a_nombre1').value,
@@ -122,19 +208,30 @@
         ContactoPersonal: g('a_email').value,
         Profesion: g('a_profesion').value,
         EstudiosComplementarios: g('a_estudioscomplementarios').value
-      });
-      showAlert('alertColaborador', 'success', '✓ Datos actualizados correctamente.');
+      };
+
+      if (modoCrear) {
+        const res = await callFlow('NewEmployee', datos);
+        showAlert('alertColaborador', 'success', '✓ Colaborador creado correctamente.');
+        itemIdActual = res?.id || res?.ID || null;
+        cedulaActual = cedulaForm;
+        modoCrear = false;
+        g('btnEliminarColaborador').style.display = '';
+        g('formColaboradorTitle').textContent = 'Editar Colaborador';
+      } else {
+        datos.itemID = itemIdActual;
+        await callFlow('UpdateEmployee', datos);
+        showAlert('alertColaborador', 'success', '✓ Datos actualizados correctamente.');
+      }
+      await cargarListaColaboradores();
     } catch (e) {
       showAlert('alertColaborador', 'error', 'Error: ' + e.message);
     } finally {
-      btn.disabled = false; btn.textContent = textoOriginal;
+      btn.disabled = false; btn.textContent = modoCrear ? 'Crear Colaborador' : 'Guardar Cambios';
     }
   }
 
   // ── Eliminar ──────────────────────────────────────────────────
-  // TODO: 'DeleteEmployee' es un nombre supuesto (sigue el patrón de
-  // UpdateEmployee/GetEmployee) — confirmar el nombre real de esta
-  // operación en el flow y ajustar si es distinto.
 
   function confirmarEliminarColaborador() {
     if (!itemIdActual) return;
@@ -155,8 +252,8 @@
 
     try {
       await callFlow('DeleteEmployee', { CedulaID: cedulaActual, itemID: itemIdActual });
-      showAlert('alertBusqueda', 'success', '✓ Colaborador eliminado correctamente.');
-      nuevaBusqueda();
+      cerrarFormColaborador();
+      await cargarListaColaboradores();
     } catch (e) {
       showAlert('alertColaborador', 'error', 'Error al eliminar: ' + e.message);
     } finally {
@@ -165,14 +262,15 @@
   }
 
   // ── Exponer funciones para onclick del HTML ───────────────────
-  window.buscarColaboradorAdmin = buscarColaboradorAdmin;
-  window.guardarColaboradorAdmin = guardarColaboradorAdmin;
-  window.nuevaBusqueda = nuevaBusqueda;
-  window.confirmarEliminarColaborador = confirmarEliminarColaborador;
-  window.cerrarModalEliminarColaborador = cerrarModalEliminarColaborador;
-  window.eliminarColaboradorAdmin = eliminarColaboradorAdmin;
+  window.mostrarFormNuevoColaborador     = mostrarFormNuevoColaborador;
+  window.cerrarFormColaborador           = cerrarFormColaborador;
+  window.guardarColaboradorAdmin         = guardarColaboradorAdmin;
+  window.confirmarEliminarColaborador    = confirmarEliminarColaborador;
+  window.cerrarModalEliminarColaborador  = cerrarModalEliminarColaborador;
+  window.eliminarColaboradorAdmin        = eliminarColaboradorAdmin;
 
   // ── Inicio ──────────────────────────────────────────────────────
   initProvincias('a');
+  cargarListaColaboradores();
 
 })();
