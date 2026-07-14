@@ -43,6 +43,15 @@ async function callFlow(operacion, datos) {
   return text ? JSON.parse(text) : {};
 }
 
+async function BuscarDataColaborador(ced) {
+  try {
+    const userData = await BuscarData('GetEmployee', { CedulaID: ced });
+    localStorage.setItem('user', JSON.stringify(userData.items[0]));
+  } catch (e) {
+    showAlert('alertGlobal', 'error', 'Error: ' + e.message);
+  }
+}
+
 function g(id) { return document.getElementById(id); }
 
 function setLoading(show, id = 'loadingState') {

@@ -97,6 +97,8 @@ async function guardarTitular() {
       EstudiosC: g('t_estudioscomplementarios').value
     });
     showAlert('alertTitular', 'success', '✓ Datos actualizados correctamente.');
+    BuscarDataColaborador(user['Cedulaa']);  // Re-guardar el usuario en localStorage para mantenerlo actualizado
+    CargaColaborador();  // Recargar los datos en pantalla para reflejar cambios
   } catch (e) {
     showAlert('alertTitular', 'error', 'Error: ' + e.message);
   } finally {
@@ -110,7 +112,6 @@ async function guardarTitular() {
 window.guardarTitular = guardarTitular;
 
 // ── Inicio ────────────────────────────────────────────────────
-initProvincias('t');
+initProvincias('t');  // Re-guardar el usuario en localStorage para mantenerlo actualizado
 CargaColaborador();
-
 })();

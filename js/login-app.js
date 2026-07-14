@@ -25,7 +25,7 @@ async function BuscarData(operacion, datos) {
   return callFlow(operacion, datos);
 }
 
-async function buscarColaborador() {
+async function BuscarUsuario() {
   const ced = g('username').value.trim();
   if (!ced) { showAlert('alertGlobal', 'error', 'Ingrese un número de cédula.'); return; }
   setLoading(true); hideAlert('alertGlobal');
@@ -42,8 +42,7 @@ async function buscarColaborador() {
 
     localStorage.setItem('UserRol', JSON.stringify(data.items[0]));
 
-    const userData = await BuscarData('GetEmployee', { CedulaID: ced });
-    localStorage.setItem('user', JSON.stringify(userData.items[0]));
+    await BuscarDataColaborador(ced);
     // replace() para que "atrás" desde el portal no regrese al login
     window.location.replace('./pages/main.html');
   } catch (e) {
@@ -54,5 +53,5 @@ async function buscarColaborador() {
 }
 
 g('password').addEventListener('keydown', function (e) {
-  if (e.key === 'Enter') buscarColaborador();
+  if (e.key === 'Enter') BuscarUsuario();
 });
