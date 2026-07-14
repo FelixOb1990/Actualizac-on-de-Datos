@@ -21,16 +21,13 @@
   }
 })();
 
-async function BuscarData(operacion, datos) {
-  return callFlow(operacion, datos);
-}
 
 async function BuscarUsuario() {
   const ced = g('username').value.trim();
   if (!ced) { showAlert('alertGlobal', 'error', 'Ingrese un número de cédula.'); return; }
   setLoading(true); hideAlert('alertGlobal');
   try {
-    const data = await BuscarData('GetUser', { CedulaID: ced });
+    const data = await callFlow('GetUser', { CedulaID: ced });
     if (!data.items || data.items.length === 0) {
       showAlert('alertGlobal', 'error', 'No se encontró ningún colaborador con esa cédula.');
       return;
@@ -42,7 +39,7 @@ async function BuscarUsuario() {
 
     localStorage.setItem('UserRol', JSON.stringify(data.items[0]));
 
-    await BuscarDataColaborador(ced);
+    await BuscarDataColaborador('GetEmployee', { CedulaID: ced });
     // replace() para que "atrás" desde el portal no regrese al login
     window.location.replace('./pages/main.html');
   } catch (e) {

@@ -43,10 +43,11 @@ async function callFlow(operacion, datos) {
   return text ? JSON.parse(text) : {};
 }
 
-async function BuscarDataColaborador(ced) {
+async function BuscarDataColaborador(operacion, datos) {
   try {
-    const userData = await BuscarData('GetEmployee', { CedulaID: ced });
+    const userData = await callFlow(operacion, datos);
     localStorage.setItem('user', JSON.stringify(userData.items[0]));
+    const user = JSON.parse(localStorage.getItem('user'));
   } catch (e) {
     showAlert('alertGlobal', 'error', 'Error: ' + e.message);
   }
