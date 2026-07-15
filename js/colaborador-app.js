@@ -96,9 +96,18 @@ async function guardarTitular() {
       Profesion: g('t_profesion').value,
       EstudiosC: g('t_estudioscomplementarios').value
     });
+
+    // Recargar desde el servidor para mostrar lo que realmente quedó
+    // guardado, y actualizar localStorage['user'] para que el resto del
+    // portal (saludo de Inicio, etc.) también quede al día.
+    const fresh = await callFlow('GetEmployee', { CedulaID: user['Cedulaa'] });
+    const f = fresh.items && fresh.items[0];
+    if (f) {
+      llenarTitular(f);
+      localStorage.setItem('user', JSON.stringify(f));
+    }
+
     showAlert('alertTitular', 'success', '✓ Datos actualizados correctamente.');
-    await BuscarDataColaborador('GetEmployee', { CedulaID: user['Cedulaa'] });  // Re-guardar el usuario en localStorage para mantenerlo actualizado
-    await CargaColaborador();  // Recargar los datos en pantalla para reflejar cambios
   } catch (e) {
     showAlert('alertTitular', 'error', 'Error: ' + e.message);
   } finally {
@@ -114,4 +123,5 @@ window.guardarTitular = guardarTitular;
 // ── Inicio ────────────────────────────────────────────────────
 initProvincias('t');
 CargaColaborador();
+
 })();
