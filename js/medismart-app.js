@@ -97,7 +97,7 @@ async function msGuardarBenef() {
 
   try {
     const operacion = tieneBenef ? 'UpdateBeneficiario' : 'NewBeneficiario';
-    const res = await callFlow(operacion, {
+    await callFlow(operacion, {
       CedulaID:    ced,
       titular:     ced,
       itemId:      benefItemId || 0,
@@ -113,8 +113,7 @@ async function msGuardarBenef() {
       Canton:      ce.options[ce.selectedIndex]?.text || '',
       Distrito:    g('b_distrito').value
     });
-    if (!tieneBenef && res?.id) { benefItemId = res.id; tieneBenef = true; }
-    g('btnEliminarBenef').style.display = 'inline-block';
+    await cargarBeneficiario();
     showAlert('alertBenef', 'success', '✓ Beneficiario guardado correctamente.');
   } catch (e) {
     showAlert('alertBenef', 'error', 'Error: ' + e.message);
@@ -130,17 +129,7 @@ async function msEliminarBenef() {
   msCerrarModal();
   try {
     await callFlow('DeleteBeneficiario', { CedulaID: user['Cedulaa'], itemId: benefItemId });
-    tieneBenef = false; benefItemId = null;
-    ['b_tipocedula','b_cedula','b_nombre','b_fechanac','b_genero','b_estadocivil','b_parentesco','b_correo']
-      .forEach(id => { const el = g(id); if (el) el.value = ''; });
-    g('b_canton').innerHTML   = '<option value="">Seleccione provincia primero</option>';
-    g('b_canton').disabled    = true;
-    g('b_distrito').innerHTML = '<option value="">Seleccione cantón primero</option>';
-    g('b_distrito').disabled  = true;
-    g('b_provincia').value    = '';
-    g('benefEmpty').classList.remove('hidden');
-    g('benefForm').classList.add('hidden');
-    g('benefActions').style.display = 'none';
+    await cargarBeneficiario();
     showAlert('alertGlobal', 'success', '✓ Beneficiario eliminado correctamente.');
   } catch (e) {
     showAlert('alertBenef', 'error', 'Error: ' + e.message);

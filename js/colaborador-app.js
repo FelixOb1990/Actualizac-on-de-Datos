@@ -126,4 +126,8 @@ window.guardarTitular = guardarTitular;
 initProvincias('t');
 CargaColaborador();
 
+<<<<<<< HEAD
 })();
+=======
+})();
+>>>>>>> 384397b01788654518d1a7962b2eb0ad737efed2
