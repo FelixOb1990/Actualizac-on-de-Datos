@@ -9,7 +9,9 @@
 
   function DevuelveNombeCompleto() {
     const u = getUser();
+    const B = getUserRol();
     console.log('Usuario actual:', u['Nombre2']);
+    console.log('Rol del usuario:', B);
     if (u['Nombre2'] !== undefined && u['Nombre2'] !== null && u['Nombre2'].trim() !== '') {
       return u['Title'] + ' ' + u['Nombre2'] + ' ' + u['Apellido1'] + ' ' + u['Apellido2'];
     } else {

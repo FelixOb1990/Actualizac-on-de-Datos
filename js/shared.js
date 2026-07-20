@@ -21,7 +21,7 @@ function getUser() {
 }
 
 function getUserRol() {
-  return  JSON.parse(localStorage.getItem('UserRol') || '{}');
+  return localStorage.getItem('UserRol') || '';
 }
 /**
  * Llama el flow compartido.
@@ -41,16 +41,6 @@ async function callFlow(operacion, datos) {
   if (!res.ok) throw new Error('Error ' + res.status + ': ' + res.statusText);
   const text = await res.text();
   return text ? JSON.parse(text) : {};
-}
-
-async function BuscarDataColaborador(operacion, datos) {
-  try {
-    const userData = await callFlow(operacion, datos);
-    localStorage.setItem('user', JSON.stringify(userData.items[0]));
-    const user = JSON.parse(localStorage.getItem('user'));
-  } catch (e) {
-    showAlert('alertGlobal', 'error', 'Error: ' + e.message);
-  }
 }
 
 function g(id) { return document.getElementById(id); }
@@ -88,4 +78,17 @@ function formatFecha(f) {
   const d = new Date(f);
   if (isNaN(d)) return '';
   return d.toLocaleDateString('es-CR', { day: '2-digit', month: 'short', year: 'numeric' });
+}
+
+// Genera un identificador único para el token de sesión (single-session
+// enforcement, ver js/session.js). Usa crypto.randomUUID() si el
+// navegador lo soporta (requiere contexto seguro: HTTPS o localhost),
+// con un fallback simple si no está disponible.
+function generarTokenSesion() {
+  if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    const r = Math.random() * 16 | 0;
+    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
 }

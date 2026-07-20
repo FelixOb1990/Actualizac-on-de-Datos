@@ -17,18 +17,18 @@
 
 // ── Control de acceso por departamento ─────────────────────────
 // Por el momento, solo el departamento "Gerencia" puede administrar noticias.
-function esUsuarioAdministrador() {
+function esUsuarioGerencia() {
   const userRol = getUserRol();
-  return userRol['rol'].Value === 'Administrador';
+  return userRol === 'Administrador';
 }
 
 // Mostrar/ocultar los ítems del sidebar restringidos según el departamento del usuario
 (function setupRestrictedNav() {
-  const esAdministrador = esUsuarioAdministrador();
+  const esGerencia = esUsuarioGerencia();
   const navNoticias = document.getElementById('navNoticiasAdmin');
-  if (navNoticias) navNoticias.style.display = esAdministrador ? '' : 'none';
+  if (navNoticias) navNoticias.style.display = esGerencia ? '' : 'none';
   const navColaboradores = document.getElementById('navColaboradoresAdmin');
-  if (navColaboradores) navColaboradores.style.display = esAdministrador ? '' : 'none';
+  if (navColaboradores) navColaboradores.style.display = esGerencia ? '' : 'none';
 })();
 
 const ROUTES = {
@@ -55,7 +55,7 @@ function getRoute() {
   const hash = window.location.hash.replace('#', '').trim();
   const routeKey = ROUTES[hash] ? hash : DEFAULT_ROUTE;
   // Si la ruta es restringida y el usuario no tiene permiso, cae a la ruta por defecto
-  if (ROUTES[routeKey].restricted && !esUsuarioAdministrador()) {
+  if (ROUTES[routeKey].restricted && !esUsuarioGerencia()) {
     return DEFAULT_ROUTE;
   }
   return routeKey;
@@ -142,6 +142,7 @@ async function navigate() {
 document.getElementById('btnLogout').addEventListener('click', e => {
   e.preventDefault();
   localStorage.removeItem('user');
+  localStorage.removeItem('sessionToken');
   // replace() elimina main.html del historial → "atrás" desde login
   // no puede regresar al portal
   window.location.replace('../index.html');

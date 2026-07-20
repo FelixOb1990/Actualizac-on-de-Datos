@@ -2,10 +2,11 @@
  * colaboradores-admin.js
  * Lista, edición, creación y borrado de colaboradores.
  * Ruta protegida: solo accesible para el departamento "Gerencia" (ver router.js).
- * Depende de js/shared.js (callFlow, g, escHtml, setLoading, showAlert, hideAlert)
- * y js/geo-data.js (PROVINCIAS/CANTONES/DISTRITOS, initProvincias,
- * cargarCantones, cargarDistritos, setGeo) — ambos cargados una sola vez
- * desde main.html, antes de router.js.
+ * Depende de js/shared.js (callFlow, g, escHtml, setLoading, showAlert, hideAlert),
+ * js/geo-data.js (PROVINCIAS/CANTONES/DISTRITOS, initProvincias,
+ * cargarCantones, cargarDistritos, setGeo) y js/departamentos.js
+ * (cargarDepartamentos) — los tres cargados una sola vez desde
+ * main.html, antes de router.js.
  * Se ejecuta como IIFE — se reinicia limpio en cada navegación del router.
  *
  * TODO: 'GetEmployees' (listar todos) y 'NewEmployee' (crear) son nombres
@@ -38,7 +39,7 @@
     empty.classList.add('hidden');
     list.innerHTML = '<div class="empty-state"><p>Cargando colaboradores...</p></div>';
     try {
-      const res = await callFlow('GetEmployee2', {});
+      const res = await callFlow('GetEmployees', {});
       colaboradores = res.items || res.value || (Array.isArray(res) ? res : []);
       renderListaColaboradores();
     } catch (e) {
@@ -87,6 +88,7 @@
       modoCrear = false;
       itemIdActual = f['ID'];
       cedulaActual = cedula;
+      await cargarDepartamentos('a');
       llenarColaborador(f);
       g('btnEliminarColaborador').style.display = '';
       g('btnGuardarColaborador').textContent = 'Guardar Cambios';
@@ -115,7 +117,7 @@
     g('a_departamento').value    = f['Departamento']?.Value || '';
     g('a_puesto').value          = f['Puesto']          || '';
     g('a_fechaingreso').value    = (f['FechadeIngreso'] || '').slice(0, 10);
-    g('a_email').value           = f['ContactpPersonal'] || '';
+    g('a_email').value           = f['ContactoPersonal'] || '';
     g('a_profesion').value       = f['Profesion']        || '';
     g('a_estudioscomplementarios').value = f['EstudiosComplementarios'] || '';
 
@@ -150,6 +152,7 @@
     cedulaActual = null;
     hideAlert('alertColaborador');
     limpiarFormColaborador();
+    cargarDepartamentos('a');
     g('btnEliminarColaborador').style.display = 'none';
     g('btnGuardarColaborador').textContent = 'Crear Colaborador';
     g('formColaboradorTitle').textContent = 'Nuevo Colaborador';
@@ -212,17 +215,24 @@
 
       if (modoCrear) {
         const res = await callFlow('NewEmployee', datos);
-        showAlert('alertColaborador', 'success', '✓ Colaborador creado correctamente.');
         itemIdActual = res?.id || res?.ID || null;
         cedulaActual = cedulaForm;
         modoCrear = false;
         g('btnEliminarColaborador').style.display = '';
         g('formColaboradorTitle').textContent = 'Editar Colaborador';
+        showAlert('alertColaborador', 'success', '✓ Colaborador creado correctamente.');
       } else {
         datos.itemID = itemIdActual;
         await callFlow('UpdateEmployee', datos);
         showAlert('alertColaborador', 'success', '✓ Datos actualizados correctamente.');
       }
+
+      // Refrescar el formulario con lo que realmente quedó guardado en el
+      // servidor (no solo lo que se tecleó), y refrescar la lista.
+      const fresh = await callFlow('GetEmployee', { CedulaID: cedulaActual });
+      const f = fresh.items && fresh.items[0];
+      if (f) llenarColaborador(f);
+
       await cargarListaColaboradores();
     } catch (e) {
       showAlert('alertColaborador', 'error', 'Error: ' + e.message);

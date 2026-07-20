@@ -2,9 +2,10 @@
  * colaborador-app.js
  * Carga y edita los datos del titular.
  * Depende de js/shared.js (getUser, callFlow, g, setLoading, showAlert,
- * hideAlert) y js/geo-data.js (PROVINCIAS/CANTONES/DISTRITOS,
- * initProvincias, cargarCantones, cargarDistritos, setGeo) — ambos
- * cargados una sola vez desde main.html, antes de router.js.
+ * hideAlert), js/geo-data.js (PROVINCIAS/CANTONES/DISTRITOS,
+ * initProvincias, cargarCantones, cargarDistritos, setGeo) y
+ * js/departamentos.js (cargarDepartamentos) — los tres cargados una sola
+ * vez desde main.html, antes de router.js.
  * Se ejecuta como IIFE — se reinicia limpio en cada navegación del router.
  */
 (function () {
@@ -53,6 +54,7 @@ async function CargaColaborador() {
   if (section) section.classList.add('hidden');
   try {
     titularItemId = user['ID'];
+    await cargarDepartamentos('t');
     llenarTitular(user);
     if (section) section.classList.remove('hidden');
     habilitarCampos();
@@ -96,9 +98,18 @@ async function guardarTitular() {
       Profesion: g('t_profesion').value,
       EstudiosC: g('t_estudioscomplementarios').value
     });
+
+    // Recargar desde el servidor para mostrar lo que realmente quedó
+    // guardado, y actualizar localStorage['user'] para que el resto del
+    // portal (saludo de Inicio, etc.) también quede al día.
+    const fresh = await callFlow('GetEmployee', { CedulaID: user['Cedulaa'] });
+    const f = fresh.items && fresh.items[0];
+    if (f) {
+      llenarTitular(f);
+      localStorage.setItem('user', JSON.stringify(f));
+    }
+
     showAlert('alertTitular', 'success', '✓ Datos actualizados correctamente.');
-    await BuscarDataColaborador('GetEmployee', { CedulaID: user['Cedulaa'] });  // Re-guardar el usuario en localStorage para mantenerlo actualizado
-    await CargaColaborador();  // Recargar los datos en pantalla para reflejar cambios
   } catch (e) {
     showAlert('alertTitular', 'error', 'Error: ' + e.message);
   } finally {
@@ -114,4 +125,5 @@ window.guardarTitular = guardarTitular;
 // ── Inicio ────────────────────────────────────────────────────
 initProvincias('t');
 CargaColaborador();
+
 })();

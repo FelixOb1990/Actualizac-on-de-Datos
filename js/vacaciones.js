@@ -167,7 +167,7 @@ async function vacEnviarSolicitud() {
 
   try {
     await callFlow('NewRegistro', {
-      cedula:     user['Cedulaa'],
+      CedulaID:     user['Cedulaa'],
       Nombre:     user['Apellido1'] + ' ' + user['Apellido2']+ ' ' + user['Title']+ ' ' + user['Nombre2'],
       TipoPermiso:  tipo,
       Inicio:  inicio,

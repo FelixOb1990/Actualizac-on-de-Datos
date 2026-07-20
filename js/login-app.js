@@ -21,13 +21,26 @@
   }
 })();
 
+// Si veníamos de un cierre de sesión automático por inactividad (ver
+// js/session.js), mostrar el aviso una sola vez.
+(function () {
+  const msg = sessionStorage.getItem('sessionExpiredMsg');
+  if (msg) {
+    sessionStorage.removeItem('sessionExpiredMsg');
+    showAlert('alertGlobal', 'error', msg);
+  }
+})();
 
-async function BuscarUsuario() {
+async function BuscarData(operacion, datos) {
+  return callFlow(operacion, datos);
+}
+
+async function buscarColaborador() {
   const ced = g('username').value.trim();
   if (!ced) { showAlert('alertGlobal', 'error', 'Ingrese un número de cédula.'); return; }
   setLoading(true); hideAlert('alertGlobal');
   try {
-    const data = await callFlow('GetUser', { CedulaID: ced });
+    const data = await BuscarData('GetUser', { CedulaID: ced });
     if (!data.items || data.items.length === 0) {
       showAlert('alertGlobal', 'error', 'No se encontró ningún colaborador con esa cédula.');
       return;
@@ -36,10 +49,19 @@ async function BuscarUsuario() {
       showAlert('alertGlobal', 'error', 'Contraseña incorrecta. Por favor, inténtelo de nuevo.');
       return;
     }
+    const userRol = data.items[0]['rol'].Value;
+    localStorage.setItem('UserRol', userRol);
+    const userData = await BuscarData('GetEmployee', { CedulaID: ced });
+    localStorage.setItem('user', JSON.stringify(userData.items[0]));
 
-    localStorage.setItem('UserRol', JSON.stringify(data.items[0]));
+    // Token de sesión única: se genera acá, se guarda en el servidor
+    // (columna 'SessionToken' en la lista de usuarios) y localmente.
+    // session.js compara periódicamente ambos para cerrar esta sesión
+    // si se inicia otra desde un dispositivo distinto.
+    const token = generarTokenSesion();
+    await callFlow('SetSessionToken', { CedulaID: ced, SessionToken: token });
+    localStorage.setItem('sessionToken', token);
 
-    await BuscarDataColaborador('GetEmployee', { CedulaID: ced });
     // replace() para que "atrás" desde el portal no regrese al login
     window.location.replace('./pages/main.html');
   } catch (e) {
@@ -50,5 +72,5 @@ async function BuscarUsuario() {
 }
 
 g('password').addEventListener('keydown', function (e) {
-  if (e.key === 'Enter') BuscarUsuario();
+  if (e.key === 'Enter') buscarColaborador();
 });
