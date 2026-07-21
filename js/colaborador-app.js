@@ -14,9 +14,12 @@ const user = getUser();
 let titularItemId = null;
 
 function habilitarCampos() {
+  // Departamento, Fecha de Ingreso y Email (corporativo) quedan fuera a
+  // propósito: son datos administrativos, igual que Puesto (readonly) —
+  // el colaborador no debe poder autoeditarlos.
   ['t_apellido1','t_apellido2','t_nombre1','t_nombre2','t_contacto','t_tel1','t_tel2',
    't_direccion','t_genero','t_estadocivil','t_provincia','t_canton','t_distrito',
-   't_fechanacimiento','t_paisnacimiento','t_departamento','t_fechaingreso','t_email',
+   't_fechanacimiento','t_paisnacimiento',
    't_profesion','t_estudioscomplementarios'].forEach(id => {
     const el = g(id); if (el) el.disabled = false;
   });
@@ -126,8 +129,4 @@ window.guardarTitular = guardarTitular;
 initProvincias('t');
 CargaColaborador();
 
-<<<<<<< HEAD
 })();
-=======
-})();
->>>>>>> 384397b01788654518d1a7962b2eb0ad737efed2

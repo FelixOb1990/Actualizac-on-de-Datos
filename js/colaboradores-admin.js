@@ -9,10 +9,12 @@
  * main.html, antes de router.js.
  * Se ejecuta como IIFE — se reinicia limpio en cada navegación del router.
  *
- * TODO: 'GetEmployees' (listar todos) y 'NewEmployee' (crear) son nombres
- * de operación SUPUESTOS, siguiendo el patrón de GetEmployee/UpdateEmployee
- * y NewBeneficiario respectivamente. Confirmar los nombres reales en el
- * flow y ajustar acá si son distintos. Lo mismo aplica a 'DeleteEmployee'.
+ * TODO: 'NewEmployee' (crear) y 'DeleteEmployee' (eliminar) son nombres
+ * de operación SUPUESTOS, siguiendo el patrón de NewBeneficiario /
+ * DeleteBeneficiario. Confirmar los nombres reales en el flow y ajustar
+ * acá si son distintos. 'GetEmployee' (sin CedulaID) ya está confirmado
+ * como la operación para traer TODOS los colaboradores — la misma que
+ * con CedulaID trae uno solo.
  */
 (function () {
 
@@ -39,7 +41,9 @@
     empty.classList.add('hidden');
     list.innerHTML = '<div class="empty-state"><p>Cargando colaboradores...</p></div>';
     try {
-      const res = await callFlow('GetEmployees', {});
+      // Sin CedulaID en datos, GetEmployee trae TODOS los colaboradores
+      // (con CedulaID trae solo uno — ver seleccionarColaborador()).
+      const res = await callFlow('GetEmployee2', {});
       colaboradores = res.items || res.value || (Array.isArray(res) ? res : []);
       renderListaColaboradores();
     } catch (e) {

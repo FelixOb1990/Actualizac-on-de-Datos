@@ -20,9 +20,13 @@ function getUser() {
   return JSON.parse(localStorage.getItem('user') || '{}');
 }
 
+// 'Rol' vive en la lista Usuario (no en la de Empleados), por eso se
+// guarda aparte del objeto 'user' — así sobrevive a cualquier refresco
+// de 'user' (ej. al guardar el perfil) sin necesidad de preservarlo a mano.
 function getUserRol() {
   return localStorage.getItem('UserRol') || '';
 }
+
 /**
  * Llama el flow compartido.
  * El flow en Power Automate recibe únicamente { operacion, datos } — la

@@ -10,7 +10,7 @@
  *    dispositivo y esta sesión se cierra.
  */
 (function () {
-  const LIMITE_INACTIVIDAD_MS   = 30 * 60 * 1000; // 30 minutos — ajustar si hace falta
+  const LIMITE_INACTIVIDAD_MS   = 5 * 60 * 1000; // 5 minutos — ajustar si hace falta
   const INTERVALO_CHEQUEO_MS    = 2  * 60 * 1000; // 2 minutos
   let temporizadorInactividad = null;
 
@@ -18,6 +18,7 @@
     sessionStorage.setItem('sessionExpiredMsg', mensaje);
     localStorage.removeItem('user');
     localStorage.removeItem('sessionToken');
+    localStorage.removeItem('UserRol');
     window.location.replace('../index.html');
   }
 

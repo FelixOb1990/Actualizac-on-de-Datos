@@ -49,10 +49,16 @@ async function buscarColaborador() {
       showAlert('alertGlobal', 'error', 'Contraseña incorrecta. Por favor, inténtelo de nuevo.');
       return;
     }
-    const userRol = data.items[0]['rol'].Value;
-    localStorage.setItem('UserRol', userRol);
+
     const userData = await BuscarData('GetEmployee', { CedulaID: ced });
     localStorage.setItem('user', JSON.stringify(userData.items[0]));
+
+    // 'Rol' vive en la lista Usuario (data, la respuesta de GetUser), no
+    // en la de Empleados — se guarda en su propia clave de localStorage
+    // (ver getUserRol() en shared.js) para que sobreviva a cualquier
+    // refresco de 'user'.
+    const userRol = data.items[0]['rol']?.Value || '';
+    localStorage.setItem('UserRol', userRol);
 
     // Token de sesión única: se genera acá, se guarda en el servidor
     // (columna 'SessionToken' en la lista de usuarios) y localmente.

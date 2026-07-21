@@ -15,20 +15,23 @@
   }
 })();
 
-// ── Control de acceso por departamento ─────────────────────────
-// Por el momento, solo el departamento "Gerencia" puede administrar noticias.
-function esUsuarioGerencia() {
+// ── Control de acceso por rol ───────────────────────────────────
+// Solo los usuarios con Rol = 'Administrador' (columna de la lista
+// Usuario, guardada aparte en localStorage al hacer login — ver
+// login-app.js y getUserRol() en shared.js) pueden administrar
+// noticias y colaboradores.
+function esUsuarioAdmin() {
   const userRol = getUserRol();
   return userRol === 'Administrador';
 }
 
-// Mostrar/ocultar los ítems del sidebar restringidos según el departamento del usuario
+// Mostrar/ocultar los ítems del sidebar restringidos según el rol del usuario
 (function setupRestrictedNav() {
-  const esGerencia = esUsuarioGerencia();
+  const esAdmin = esUsuarioAdmin();
   const navNoticias = document.getElementById('navNoticiasAdmin');
-  if (navNoticias) navNoticias.style.display = esGerencia ? '' : 'none';
+  if (navNoticias) navNoticias.style.display = esAdmin ? '' : 'none';
   const navColaboradores = document.getElementById('navColaboradoresAdmin');
-  if (navColaboradores) navColaboradores.style.display = esGerencia ? '' : 'none';
+  if (navColaboradores) navColaboradores.style.display = esAdmin ? '' : 'none';
 })();
 
 const ROUTES = {
@@ -55,7 +58,7 @@ function getRoute() {
   const hash = window.location.hash.replace('#', '').trim();
   const routeKey = ROUTES[hash] ? hash : DEFAULT_ROUTE;
   // Si la ruta es restringida y el usuario no tiene permiso, cae a la ruta por defecto
-  if (ROUTES[routeKey].restricted && !esUsuarioGerencia()) {
+  if (ROUTES[routeKey].restricted && !esUsuarioAdmin()) {
     return DEFAULT_ROUTE;
   }
   return routeKey;
@@ -143,6 +146,7 @@ document.getElementById('btnLogout').addEventListener('click', e => {
   e.preventDefault();
   localStorage.removeItem('user');
   localStorage.removeItem('sessionToken');
+  localStorage.removeItem('UserRol');
   // replace() elimina main.html del historial → "atrás" desde login
   // no puede regresar al portal
   window.location.replace('../index.html');

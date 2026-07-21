@@ -81,14 +81,15 @@
       <div class="card-header"><h2>Datos Laborales</h2></div>
       <div class="card-body">
         <div class="form-grid">
-          <!-- placeholder: falta conectar en colaborador-app.js -->
+          <!-- Departamento: no editable por el colaborador, es dato administrativo -->
           <div class="field"><label>Departamento</label>
             <select id="t_departamento" disabled><option value="">Seleccione...</option></select>
           </div>
           <!-- Puesto: no editable, por definición de negocio -->
           <div class="field"><label>Puesto</label><input type="text" id="t_puesto" readonly></div>
-          <!-- placeholder: falta conectar en colaborador-app.js -->
+          <!-- Fecha de Ingreso: no editable por el colaborador, es dato administrativo -->
           <div class="field col-span-2"><label>Fecha de Ingreso</label><input type="date" id="t_fechaingreso" disabled></div>
+          <!-- Email (corporativo): no editable por el colaborador, es dato administrativo -->
           <div class="field col-span-2"><label>Email</label><input type="email" id="t_email" disabled></div>
         </div>
       </div>
