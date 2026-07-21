@@ -121,7 +121,7 @@
     g('a_departamento').value    = f['Departamento']?.Value || '';
     g('a_puesto').value          = f['Puesto']          || '';
     g('a_fechaingreso').value    = (f['FechadeIngreso'] || '').slice(0, 10);
-    g('a_email').value           = f['ContactoPersonal'] || '';
+    g('a_email').value           = f['ContactpPersonal'] || '';
     g('a_profesion').value       = f['Profesion']        || '';
     g('a_estudioscomplementarios').value = f['EstudiosComplementarios'] || '';
 
@@ -192,7 +192,6 @@
       const ecVal = ecMap[g('a_estadocivil').value] || g('a_estadocivil').value;
 
       const datos = {
-        CedulaID:  modoCrear ? cedulaForm : cedulaActual,
         Cedulaa:   cedulaForm,
         Apellido1: g('a_apellido1').value,
         Apellido2: g('a_apellido2').value,
@@ -212,9 +211,9 @@
         Departamento:    g('a_departamento').value,
         Puesto:          g('a_puesto').value,
         FechaIngreso:    g('a_fechaingreso').value,
-        ContactoPersonal: g('a_email').value,
+        Contacto: g('a_email').value,
         Profesion: g('a_profesion').value,
-        EstudiosComplementarios: g('a_estudioscomplementarios').value
+        EstudiosC: g('a_estudioscomplementarios').value
       };
 
       if (modoCrear) {
